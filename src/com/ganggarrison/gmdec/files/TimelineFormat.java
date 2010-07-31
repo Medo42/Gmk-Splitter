@@ -12,27 +12,27 @@ import java.io.IOException;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
+import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.Timeline;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.xml.TimelineXmlFormat;
 
 public class TimelineFormat extends ResourceFormat<Timeline> {
 	@Override
 	public Timeline read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Timeline timeline = new TimelineXmlFormat().read(getXmlFile(path, resourceName), drcn);
+		timeline.setName(resourceName);
+		return timeline;
 	}
 
 	@Override
 	public void addResToGmFile(Timeline resource, GmFile gmf, ResNode parent) {
-		// TODO Auto-generated method stub
-
+		addResToTree(resource, gmf, parent, Kind.TIMELINE);
 	}
 
 	@Override
 	public void write(File path, Timeline timeline, GmFile gmf) throws IOException {
-		// TODO Auto-generated method stub
-
+		new TimelineXmlFormat().write(timeline, getXmlFile(path, timeline));
 	}
-
 }
