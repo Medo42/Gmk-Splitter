@@ -12,14 +12,11 @@ import org.lateralgm.resources.GameSettings;
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.LgmConst;
 import com.ganggarrison.gmdec.Tools;
 
 public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
-	public static interface LgmConstProvider {
-		byte getLgmConst();
-	}
-
-	public enum ColorDepth implements LgmConstProvider {
+	public enum ColorDepth implements LgmConst.Provider {
 		COLOR_NOCHANGE(GameSettings.COLOR_NOCHANGE),
 		COLOR_16(GameSettings.COLOR_16),
 		COLOR_32(GameSettings.COLOR_32);
@@ -35,7 +32,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		}
 	}
 
-	public enum Resolution implements LgmConstProvider {
+	public enum Resolution implements LgmConst.Provider {
 		RES_NOCHANGE(GameSettings.RES_NOCHANGE),
 		RES_320X240(GameSettings.RES_320X240),
 		RES_640X480(GameSettings.RES_640X480),
@@ -55,7 +52,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		}
 	}
 
-	public enum Frequency implements LgmConstProvider {
+	public enum Frequency implements LgmConst.Provider {
 		FREQ_NOCHANGE(GameSettings.FREQ_NOCHANGE),
 		FREQ_60(GameSettings.FREQ_60),
 		FREQ_70(GameSettings.FREQ_70),
@@ -74,7 +71,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		}
 	}
 
-	public enum Priority implements LgmConstProvider {
+	public enum Priority implements LgmConst.Provider {
 		PRIORITY_NORMAL(GameSettings.PRIORITY_NORMAL),
 		PRIORITY_HIGH(GameSettings.PRIORITY_HIGH),
 		PRIORITY_HIGHEST(GameSettings.PRIORITY_HIGHEST);
@@ -90,7 +87,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		}
 	}
 
-	public enum Loadbar implements LgmConstProvider {
+	public enum Loadbar implements LgmConst.Provider {
 		LOADBAR_NONE(GameSettings.LOADBAR_NONE),
 		LOADBAR_DEFAULT(GameSettings.LOADBAR_DEFAULT),
 		LOADBAR_CUSTOM(GameSettings.LOADBAR_CUSTOM);
@@ -128,9 +125,9 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			writer.putElement("switchVideoMode", settings.setResolution);
 			if (settings.setResolution || !omitDisabledFields) {
 				writer.startElement("videoMode");
-				writer.putElement("colorDepth", lgmConstToString(settings.colorDepth, ColorDepth.class));
-				writer.putElement("resolution", lgmConstToString(settings.resolution, Resolution.class));
-				writer.putElement("frequency", lgmConstToString(settings.frequency, Frequency.class));
+				writer.putElement("colorDepth", LgmConst.toString(settings.colorDepth, ColorDepth.class));
+				writer.putElement("resolution", LgmConst.toString(settings.resolution, Resolution.class));
+				writer.putElement("frequency", LgmConst.toString(settings.frequency, Frequency.class));
 				writer.endElement();
 			}
 		}
@@ -144,7 +141,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		writer.endElement();
 		writer.startElement("progressBar");
 		{
-			writer.putElement("mode", lgmConstToString(settings.loadBarMode, Loadbar.class));
+			writer.putElement("mode", LgmConst.toString(settings.loadBarMode, Loadbar.class));
 			writer.putElement("scaleImage", settings.scaleProgressBar);
 		}
 		writer.endElement();
@@ -186,7 +183,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		writer.endElement();
 		writer.startElement("system");
 		{
-			writer.putElement("processPriority", lgmConstToString(settings.gamePriority, Priority.class));
+			writer.putElement("processPriority", LgmConst.toString(settings.gamePriority, Priority.class));
 			writer.putElement("disableScreensavers", settings.disableScreensavers);
 			writer.putElement("freezeOnLoseFocus", settings.freezeOnLoseFocus);
 		}
@@ -224,9 +221,9 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			settings.setResolution = reader.getBoolElement("switchVideoMode");
 			if (settings.setResolution || !omitDisabledFields) {
 				reader.enterElement("videoMode");
-				settings.colorDepth = stringToLgmConst(reader.getStringElement("colorDepth"), ColorDepth.class);
-				settings.resolution = stringToLgmConst(reader.getStringElement("resolution"), Resolution.class);
-				settings.frequency = stringToLgmConst(reader.getStringElement("frequency"), Frequency.class);
+				settings.colorDepth = LgmConst.fromString(reader.getStringElement("colorDepth"), ColorDepth.class);
+				settings.resolution = LgmConst.fromString(reader.getStringElement("resolution"), Resolution.class);
+				settings.frequency = LgmConst.fromString(reader.getStringElement("frequency"), Frequency.class);
 				reader.leaveElement();
 			}
 		}
@@ -240,7 +237,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		reader.leaveElement();
 		reader.enterElement("progressBar");
 		{
-			settings.loadBarMode = stringToLgmConst(reader.getStringElement("mode"), Loadbar.class);
+			settings.loadBarMode = LgmConst.fromString(reader.getStringElement("mode"), Loadbar.class);
 			settings.scaleProgressBar = reader.getBoolElement("scaleImage");
 		}
 		reader.leaveElement();
@@ -282,7 +279,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		reader.leaveElement();
 		reader.enterElement("system");
 		{
-			settings.gamePriority = stringToLgmConst(reader.getStringElement("processPriority"), Priority.class);
+			settings.gamePriority = LgmConst.fromString(reader.getStringElement("processPriority"), Priority.class);
 			settings.disableScreensavers = reader.getBoolElement("disableScreensavers");
 			settings.freezeOnLoseFocus = reader.getBoolElement("freezeOnLoseFocus");
 		}
@@ -298,18 +295,5 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		reader.leaveElement();
 		reader.leaveElement();
 		return settings;
-	}
-
-	public <T extends Enum<? extends LgmConstProvider>> String lgmConstToString(byte lgmConst, Class<T> enumType) {
-		for (LgmConstProvider lcp : (LgmConstProvider[]) enumType.getEnumConstants()) {
-			if (lcp.getLgmConst() == lgmConst) {
-				return lcp.toString();
-			}
-		}
-		throw new IllegalArgumentException();
-	}
-
-	public <T extends Enum<? extends LgmConstProvider>> byte stringToLgmConst(String string, Class<T> enumType) {
-		return ((LgmConstProvider) Enum.valueOf((Class) enumType, string)).getLgmConst();
 	}
 }

@@ -25,6 +25,7 @@ import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.LgmConst;
 import com.ganggarrison.gmdec.Tools;
 
 public class ActionXmlFormat extends XmlFormat<Action> {
@@ -38,11 +39,11 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 			if (la.name != null && !la.name.trim().isEmpty()) {
 				out.putComment("action name: " + la.name);
 			}
-			out.putElement("kind", actionKindToString(la.actionKind));
+			out.putElement("kind", LgmConst.toString(la.actionKind, ActionKind.class));
 			out.putElement("allowRelative", la.allowRelative);
 			out.putElement("question", la.question);
 			out.putElement("canApplyTo", la.canApplyTo);
-			out.putElement("actionType", actionTypeToString(la.execType));
+			out.putElement("actionType", LgmConst.toString(la.execType, ExecType.class));
 			out.putElement("functionName", la.execInfo);
 			out.putElement("relative", act.isRelative());
 			out.putElement("not", act.isNot());
@@ -60,7 +61,7 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 			List<Argument> args = act.getArguments();
 			for (Argument arg : args) {
 				out.startElement("argument");
-				out.putAttribute("kind", argumentKindToString(arg.kind));
+				out.putAttribute("kind", LgmConst.toString(arg.kind, ArgumentKind.class));
 				if (Argument.getResourceKind(arg.kind) != null) {
 					ResourceReference<? extends Resource<?, ?>> ref = arg.getRes();
 					out.putText(getRefStr(ref));
@@ -90,11 +91,11 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 
 		la.id = id;
 		la.parentId = library;
-		la.actionKind = stringToActionKind(reader.getStringElement("kind"));
+		la.actionKind = LgmConst.fromString(reader.getStringElement("kind"), ActionKind.class);
 		la.allowRelative = reader.getBoolElement("allowRelative");
 		la.question = reader.getBoolElement("question");
 		la.canApplyTo = reader.getBoolElement("canApplyTo");
-		la.execType = stringToActionType(reader.getStringElement("actionType"));
+		la.execType = LgmConst.fromString(reader.getStringElement("actionType"), ExecType.class);
 		la.execInfo = reader.getStringElement("functionName");
 
 		boolean relative = reader.getBoolElement("relative");
@@ -106,7 +107,7 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 		List<Argument> args = new ArrayList<Argument>();
 		while (reader.hasNextElement()) {
 			reader.enterElement("argument");
-			byte kind = stringToArgumentKind(reader.getStringAttribute("kind"));
+			byte kind = LgmConst.fromString(reader.getStringAttribute("kind"), ArgumentKind.class);
 			Argument arg = new Argument(kind);
 			if (Argument.getResourceKind(kind) != null) {
 				String ref = reader.getTextContent();
@@ -143,100 +144,76 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 		return act;
 	}
 
-	private static enum ArgumentKind {
-		EXPRESSION(0),
-		STRING(1),
-		BOTH(2),
-		BOOLEAN(3),
-		MENU(4),
-		SPRITE(5),
-		SOUND(6),
-		BACKGROUND(7),
-		PATH(8),
-		SCRIPT(9),
-		GMOBJECT(10),
-		ROOM(11),
-		FONT(12),
-		COLOR(13),
-		TIMELINE(14),
-		FONTSTRING(15);
+	private static enum ArgumentKind implements LgmConst.Provider {
+		EXPRESSION(Argument.ARG_EXPRESSION),
+		STRING(Argument.ARG_STRING),
+		BOTH(Argument.ARG_BOTH),
+		BOOLEAN(Argument.ARG_BOOLEAN),
+		MENU(Argument.ARG_MENU),
+		SPRITE(Argument.ARG_SPRITE),
+		SOUND(Argument.ARG_SOUND),
+		BACKGROUND(Argument.ARG_BACKGROUND),
+		PATH(Argument.ARG_PATH),
+		SCRIPT(Argument.ARG_SCRIPT),
+		GMOBJECT(Argument.ARG_GMOBJECT),
+		ROOM(Argument.ARG_ROOM),
+		FONT(Argument.ARG_FONT),
+		COLOR(Argument.ARG_COLOR),
+		TIMELINE(Argument.ARG_TIMELINE),
+		FONTSTRING(Argument.ARG_FONTSTRING);
 
-		public final int lgmconst;
+		public final byte lgmconst;
 
-		private ArgumentKind(int lgmconst) {
+		private ArgumentKind(byte lgmconst) {
 			this.lgmconst = lgmconst;
 		}
-	}
 
-	private static String argumentKindToString(byte kind) {
-		for (ArgumentKind ak : ArgumentKind.values()) {
-			if (ak.lgmconst == kind) {
-				return ak.toString();
-			}
+		@Override
+		public byte getLgmConst() {
+			return lgmconst;
 		}
-		throw new IllegalArgumentException("Unknown argument kind " + kind);
 	}
 
-	private static byte stringToArgumentKind(String str) {
-		return (byte) ArgumentKind.valueOf(str).lgmconst;
-	}
+	private static enum ExecType implements LgmConst.Provider {
+		NONE(Action.EXEC_NONE),
+		FUNCTION(Action.EXEC_FUNCTION),
+		CODE(Action.EXEC_CODE);
 
-	private static enum ActionType {
-		NONE(0),
-		FUNCTION(1),
-		CODE(2);
+		public final byte lgmconst;
 
-		public final int lgmconst;
-
-		private ActionType(int lgmconst) {
+		private ExecType(byte lgmconst) {
 			this.lgmconst = lgmconst;
 		}
-	}
 
-	private static String actionTypeToString(byte actionType) {
-		for (ActionType at : ActionType.values()) {
-			if (at.lgmconst == actionType) {
-				return at.toString();
-			}
+		@Override
+		public byte getLgmConst() {
+			return lgmconst;
 		}
-		throw new IllegalArgumentException("Unknown action type " + actionType);
 	}
 
-	private static byte stringToActionType(String str) {
-		return (byte) ActionType.valueOf(str.toUpperCase()).lgmconst;
-	}
+	private static enum ActionKind implements LgmConst.Provider {
+		NORMAL(Action.ACT_NORMAL),
+		BEGIN(Action.ACT_BEGIN),
+		END(Action.ACT_END),
+		ELSE(Action.ACT_ELSE),
+		EXIT(Action.ACT_EXIT),
+		REPEAT(Action.ACT_REPEAT),
+		VARIABLE(Action.ACT_VARIABLE),
+		CODE(Action.ACT_CODE),
+		PLACEHOLDER(Action.ACT_PLACEHOLDER),
+		SEPARATOR(Action.ACT_SEPARATOR),
+		LABEL(Action.ACT_LABEL);
 
-	private static enum ActionKind {
-		NORMAL(0),
-		BEGIN(1),
-		END(2),
-		ELSE(3),
-		EXIT(4),
-		REPEAT(5),
-		VARIABLE(6),
-		CODE(7),
-		PLACEHOLDER(8),
-		SEPARATOR(9),
-		LABEL(10);
+		public final byte lgmconst;
 
-		public final int lgmconst;
-
-		private ActionKind(int lgmconst) {
+		private ActionKind(byte lgmconst) {
 			this.lgmconst = lgmconst;
 		}
-	}
 
-	private static String actionKindToString(byte actionKind) {
-		for (ActionKind ak : ActionKind.values()) {
-			if (ak.lgmconst == actionKind) {
-				return ak.toString();
-			}
+		@Override
+		public byte getLgmConst() {
+			return lgmconst;
 		}
-		throw new IllegalArgumentException("Unknown action kind " + actionKind);
-	}
-
-	private static byte stringToActionKind(String str) {
-		return (byte) ActionKind.valueOf(str.toUpperCase()).lgmconst;
 	}
 
 	private static class ActionReferenceCreator implements DeferredReferenceCreator {

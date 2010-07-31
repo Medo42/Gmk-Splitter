@@ -18,13 +18,14 @@ import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.LgmConst;
 
 public class EventXmlFormat extends XmlFormat<Event> {
 	@Override
 	public void write(Event event, XmlWriter out) {
 		out.startElement("event");
 		{
-			out.putAttribute("category", mainEventTypeToString(event.mainId));
+			out.putAttribute("category", LgmConst.toString((byte) event.mainId, MainEventType.class));
 			// TODO: Trigger events probably need special attention too.
 			if (event.mainId == MainEvent.EV_COLLISION) {
 				out.putAttribute("with", getRefStr(event.other));
@@ -46,7 +47,7 @@ public class EventXmlFormat extends XmlFormat<Event> {
 
 		reader.enterElement("event");
 		{
-			int category = stringToMainEventType(reader.getStringAttribute("category"));
+			int category = LgmConst.fromString(reader.getStringAttribute("category"), MainEventType.class);
 			event.mainId = category;
 
 			if (event.mainId == MainEvent.EV_COLLISION) {
@@ -67,38 +68,30 @@ public class EventXmlFormat extends XmlFormat<Event> {
 		return event;
 	}
 
-	private static enum MainEventType {
-		CREATE(0),
-		DESTROY(1),
-		ALARM(2),
-		STEP(3),
-		COLLISION(4),
-		KEYBOARD(5),
-		MOUSE(6),
-		OTHER(7),
-		DRAW(8),
-		KEYPRESS(9),
-		KEYRELEASE(10),
-		TRIGGER(11);
+	private static enum MainEventType implements LgmConst.Provider {
+		CREATE(MainEvent.EV_CREATE),
+		DESTROY(MainEvent.EV_DESTROY),
+		ALARM(MainEvent.EV_ALARM),
+		STEP(MainEvent.EV_STEP),
+		COLLISION(MainEvent.EV_COLLISION),
+		KEYBOARD(MainEvent.EV_KEYBOARD),
+		MOUSE(MainEvent.EV_MOUSE),
+		OTHER(MainEvent.EV_OTHER),
+		DRAW(MainEvent.EV_DRAW),
+		KEYPRESS(MainEvent.EV_KEYPRESS),
+		KEYRELEASE(MainEvent.EV_KEYRELEASE),
+		TRIGGER(MainEvent.EV_TRIGGER);
 
-		public final int lgmconst;
+		public final byte lgmconst;
 
-		private MainEventType(int lgmconst) {
+		private MainEventType(byte lgmconst) {
 			this.lgmconst = lgmconst;
 		}
-	}
 
-	private static String mainEventTypeToString(int mainEventType) {
-		for (MainEventType met : MainEventType.values()) {
-			if (met.lgmconst == mainEventType) {
-				return met.toString();
-			}
+		@Override
+		public byte getLgmConst() {
+			return lgmconst;
 		}
-		throw new IllegalArgumentException("Unknown argument mainEventType " + mainEventType);
-	}
-
-	private static byte stringToMainEventType(String str) {
-		return (byte) MainEventType.valueOf(str.toUpperCase()).lgmconst;
 	}
 
 	private static class ReferenceCreator implements DeferredReferenceCreator {
