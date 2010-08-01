@@ -74,8 +74,10 @@ public class GmkSplitter {
 		try {
 			ResNode root = new ResNode("Root", (byte) 0, null, null);
 			GmFile gmf = GmFileReader.readGmFile(sourceGmk.getAbsolutePath(), root);
-			// if(gmf.fileVersion != 800) throw new GmFormatException(gmf,
-			// "The DeComposer only supports Game Maker 8 gmk files at the moment - sorry.");
+			if (gmf.fileVersion != 800) {
+				System.err
+						.println("Warning: The source .gmk file is not of GM version 8. GMK Splitter is *not tested* with this format.");
+			}
 			ResourceWriter.writeTree(root, gmf, destinationPath);
 
 			writeConstants(gmf, destinationPath);
