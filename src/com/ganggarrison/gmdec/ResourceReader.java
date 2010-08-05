@@ -31,7 +31,7 @@ import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
 import com.ganggarrison.gmdec.files.ExtensionsFormat;
 import com.ganggarrison.gmdec.files.GameInfoFormat;
 import com.ganggarrison.gmdec.files.GameSettingsFormat;
-import com.ganggarrison.gmdec.files.ResourceFormat;
+import com.ganggarrison.gmdec.files.FileTreeFormat;
 import com.ganggarrison.gmdec.xml.ResourceListXmlFormat;
 
 public class ResourceReader {
@@ -159,7 +159,7 @@ public class ResourceReader {
 			}
 		}
 
-		private <T> void readResource(File dir, String name, ResNode node, ResourceFormat<T> format) throws IOException {
+		private <T> void readResource(File dir, String name, ResNode node, FileTreeFormat<T> format) throws IOException {
 			T res = format.read(dir, name, notifier);
 			format.addResToGmFile(res, gmFile, node);
 		}

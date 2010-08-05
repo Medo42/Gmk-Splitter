@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 
-import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.GmObject;
 import org.lateralgm.resources.sub.Event;
@@ -48,11 +47,6 @@ public class ObjectFormat extends ResourceFormat<GmObject> {
 			}
 		}
 		return gmObject;
-	}
-
-	@Override
-	public void addResToGmFile(GmObject resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent);
 	}
 
 	@Override

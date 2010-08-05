@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Script;
 import org.lateralgm.resources.Script.PScript;
@@ -39,11 +38,6 @@ public class ScriptFormat extends ResourceFormat<Script> {
 		script.put(PScript.CODE, code.toString());
 
 		return script;
-	}
-
-	@Override
-	public void addResToGmFile(Script resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent);
 	}
 
 	@Override

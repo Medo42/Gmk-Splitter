@@ -10,7 +10,6 @@ package com.ganggarrison.gmdec.files;
 import java.io.File;
 import java.io.IOException;
 
-import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Timeline;
 
@@ -23,11 +22,6 @@ public class TimelineFormat extends ResourceFormat<Timeline> {
 		Timeline timeline = new TimelineXmlFormat().read(getXmlFile(path, resourceName), drcn);
 		timeline.setName(resourceName);
 		return timeline;
-	}
-
-	@Override
-	public void addResToGmFile(Timeline resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent);
 	}
 
 	@Override

@@ -13,7 +13,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Background;
 
@@ -34,11 +33,6 @@ public class BackgroundFormat extends ResourceFormat<Background> {
 			background.setBackgroundImage(bg);
 		}
 		return background;
-	}
-
-	@Override
-	public void addResToGmFile(Background resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent);
 	}
 
 	@Override

@@ -10,7 +10,6 @@ package com.ganggarrison.gmdec.files;
 import java.io.File;
 import java.io.IOException;
 
-import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Path;
 
@@ -23,11 +22,6 @@ public class PathFormat extends ResourceFormat<Path> {
 		Path path = new PathXmlFormat().read(getXmlFile(filePath, resourceName), drcn);
 		path.setName(resourceName);
 		return path;
-	}
-
-	@Override
-	public void addResToGmFile(Path resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent);
 	}
 
 	@Override

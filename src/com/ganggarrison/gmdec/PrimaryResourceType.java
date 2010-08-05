@@ -13,7 +13,7 @@ import com.ganggarrison.gmdec.files.BackgroundFormat;
 import com.ganggarrison.gmdec.files.FontFormat;
 import com.ganggarrison.gmdec.files.ObjectFormat;
 import com.ganggarrison.gmdec.files.PathFormat;
-import com.ganggarrison.gmdec.files.ResourceFormat;
+import com.ganggarrison.gmdec.files.FileTreeFormat;
 import com.ganggarrison.gmdec.files.RoomFormat;
 import com.ganggarrison.gmdec.files.ScriptFormat;
 import com.ganggarrison.gmdec.files.SoundFormat;
@@ -36,11 +36,11 @@ public enum PrimaryResourceType {
 	OBJECTS("Objects", new ObjectFormat(), Resource.Kind.OBJECT),
 	ROOMS("Rooms", new RoomFormat(), Resource.Kind.ROOM);
 
-	public ResourceFormat<?> format;
+	public FileTreeFormat<?> format;
 	public final String pathName;
 	public final Resource.Kind resourceKind;
 
-	private PrimaryResourceType(String pathName, ResourceFormat<?> format, Resource.Kind resKind) {
+	private PrimaryResourceType(String pathName, FileTreeFormat<?> format, Resource.Kind resKind) {
 		this.format = format;
 		this.pathName = pathName;
 		this.resourceKind = resKind;

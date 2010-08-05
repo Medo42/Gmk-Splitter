@@ -10,7 +10,6 @@ package com.ganggarrison.gmdec.files;
 import java.io.File;
 import java.io.IOException;
 
-import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Font;
 
@@ -23,11 +22,6 @@ public class FontFormat extends ResourceFormat<Font> {
 		Font font = new FontXmlFormat().read(getXmlFile(path, resourceName), drcn);
 		font.setName(resourceName);
 		return font;
-	}
-
-	@Override
-	public void addResToGmFile(Font resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent);
 	}
 
 	@Override

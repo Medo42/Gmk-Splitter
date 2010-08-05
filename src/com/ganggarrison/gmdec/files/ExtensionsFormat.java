@@ -18,7 +18,7 @@ import org.lateralgm.resources.Resource;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.xml.ExtensionsXmlFormat;
 
-public class ExtensionsFormat extends ResourceFormat<List<String>> {
+public class ExtensionsFormat extends FileTreeFormat<List<String>> {
 	private static String filename = "Extension Packages.xml";
 
 	@Override
