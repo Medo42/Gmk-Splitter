@@ -119,7 +119,7 @@ public class ResourceReader {
 			dupe.properties.put(PInstance.ID, ++lastId);
 		}
 
-		gmf.lastTileId = lastId;
+		gmf.lastInstanceId = lastId;
 		if (!duplicateInstances.isEmpty()) {
 			System.err.println(duplicateInstances.size() + " duplicate instance IDs have been changed.");
 		}
