@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.Script;
 import org.lateralgm.resources.Script.PScript;
 
@@ -44,7 +43,7 @@ public class ScriptFormat extends ResourceFormat<Script> {
 
 	@Override
 	public void addResToGmFile(Script resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent, Kind.SCRIPT);
+		addResToTree(resource, gmf, parent);
 	}
 
 	@Override

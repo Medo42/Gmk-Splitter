@@ -14,6 +14,7 @@ import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.file.ResourceList;
 import org.lateralgm.resources.Resource;
+import org.lateralgm.resources.Resource.Kind;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
@@ -26,7 +27,8 @@ public abstract class ResourceFormat<T> {
 	public abstract T read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn)
 			throws IOException;
 
-	protected <U extends Resource<U, ?>> void addResToTree(U resource, GmFile gmf, ResNode parent, Resource.Kind kind) {
+	public <U extends Resource<U, ?>> void addResToTree(U resource, GmFile gmf, ResNode parent) {
+		Kind kind = resource.getKind();
 		ResourceList<U> list = (ResourceList<U>) gmf.getList(kind);
 		U oldRes = list.getUnsafe(resource.getId());
 		if (oldRes != null) {

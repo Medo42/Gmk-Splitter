@@ -12,7 +12,6 @@ import java.io.IOException;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.Sound;
 import org.lateralgm.resources.Sound.PSound;
 
@@ -35,7 +34,7 @@ public class SoundFormat extends ResourceFormat<Sound> {
 
 	@Override
 	public void addResToGmFile(Sound resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent, Kind.SOUND);
+		addResToTree(resource, gmf, parent);
 	}
 
 	@Override

@@ -16,7 +16,6 @@ import javax.imageio.ImageIO;
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Background;
-import org.lateralgm.resources.Resource.Kind;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.xml.BackgroundXmlFormat;
@@ -39,7 +38,7 @@ public class BackgroundFormat extends ResourceFormat<Background> {
 
 	@Override
 	public void addResToGmFile(Background resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent, Kind.BACKGROUND);
+		addResToTree(resource, gmf, parent);
 	}
 
 	@Override

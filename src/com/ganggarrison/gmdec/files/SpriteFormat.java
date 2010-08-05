@@ -16,7 +16,6 @@ import javax.imageio.ImageIO;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.Sprite;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
@@ -62,7 +61,7 @@ public class SpriteFormat extends ResourceFormat<Sprite> {
 
 	@Override
 	public void addResToGmFile(Sprite resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent, Kind.SPRITE);
+		addResToTree(resource, gmf, parent);
 	}
 
 	@Override
