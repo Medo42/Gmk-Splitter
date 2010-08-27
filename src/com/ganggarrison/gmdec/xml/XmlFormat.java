@@ -19,9 +19,6 @@ import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 
 public abstract class XmlFormat<T> {
-	protected boolean convertLineEndings = true;
-	protected boolean omitDisabledFields = true;
-
 	public abstract void write(T object, XmlWriter writer);
 
 	public abstract T read(XmlReader reader, DeferredReferenceCreatorNotifier notifier);

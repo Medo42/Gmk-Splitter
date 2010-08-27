@@ -25,6 +25,8 @@ import com.ganggarrison.gmdec.xml.ConstantsXmlFormat;
 
 public class GmkSplitter {
 	private static final String CONSTANTS_FILENAME = "Constants.xml";
+	public static boolean convertLineEndings = true;
+	public static boolean omitDisabledFields = true;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 2) {

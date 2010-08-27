@@ -31,6 +31,7 @@ import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredPropertyReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 import com.ganggarrison.gmdec.Tools;
 
 public class RoomXmlFormat extends XmlFormat<Room> {
@@ -54,7 +55,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 			writer.putElement("speed", room.get(PRoom.SPEED));
 			writer.putElement("persistent", room.get(PRoom.PERSISTENT));
 			String creationCode = room.get(PRoom.CREATION_CODE);
-			if (convertLineEndings) {
+			if (GmkSplitter.convertLineEndings) {
 				creationCode = Tools.toLf(creationCode);
 			}
 			writer.putElement("creationCode", creationCode);
@@ -68,7 +69,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 			writer.endElement();
 			boolean enableViews = room.get(PRoom.ENABLE_VIEWS);
 			writer.putElement("enableViews", enableViews);
-			if (enableViews || !omitDisabledFields) {
+			if (enableViews || !GmkSplitter.omitDisabledFields) {
 				writer.startElement("views");
 				for (View view : room.views) {
 					writeView(writer, view);
@@ -90,7 +91,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 			{
 				boolean rememberEditorSettings = room.get(PRoom.REMEMBER_WINDOW_SIZE);
 				writer.putAttribute("remember", rememberEditorSettings);
-				if (rememberEditorSettings || !omitDisabledFields) {
+				if (rememberEditorSettings || !GmkSplitter.omitDisabledFields) {
 					int editorWidth = room.get(PRoom.EDITOR_WIDTH);
 					int editorHeight = room.get(PRoom.EDITOR_HEIGHT);
 					writeDimension(writer, "size", new Dimension(editorWidth, editorHeight));
@@ -189,7 +190,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 			room.put(PRoom.SPEED, reader.getIntElement("speed"));
 			room.put(PRoom.PERSISTENT, reader.getBoolElement("persistent"));
 			String creationCode = reader.getStringElement("creationCode");
-			if (convertLineEndings) {
+			if (GmkSplitter.convertLineEndings) {
 				creationCode = Tools.toCrlf(creationCode);
 			}
 			room.put(PRoom.CREATION_CODE, creationCode);
@@ -203,7 +204,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 			reader.leaveElement();
 			boolean enableViews = reader.getBoolElement("enableViews");
 			room.put(PRoom.ENABLE_VIEWS, enableViews);
-			if (enableViews || !omitDisabledFields) {
+			if (enableViews || !GmkSplitter.omitDisabledFields) {
 				reader.enterElement("views");
 				for (int i = 0; i < room.views.size() && reader.hasNextElement(); i++) {
 					readView(reader, room.views.get(i), notifier);
@@ -228,7 +229,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 			{
 				boolean rememberEditorSettings = reader.getBoolAttribute("remember");
 				room.put(PRoom.REMEMBER_WINDOW_SIZE, rememberEditorSettings);
-				if (rememberEditorSettings || !omitDisabledFields) {
+				if (rememberEditorSettings || !GmkSplitter.omitDisabledFields) {
 					Dimension editorSize = readDimension(reader, "size");
 					room.put(PRoom.EDITOR_WIDTH, editorSize.width);
 					room.put(PRoom.EDITOR_HEIGHT, editorSize.height);

@@ -20,6 +20,7 @@ import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredPropertyReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 import com.ganggarrison.gmdec.Tools;
 
 public class InstanceXmlFormat extends XmlFormat<Instance> {
@@ -39,7 +40,7 @@ public class InstanceXmlFormat extends XmlFormat<Instance> {
 			writeResourceRef(writer, "object", object);
 			writePoint(writer, "position", instance.getPosition());
 			String creationCode = instance.getCreationCode();
-			if (convertLineEndings) {
+			if (GmkSplitter.convertLineEndings) {
 				creationCode = Tools.toLf(creationCode);
 			}
 			writer.putElement("creationCode", creationCode);
@@ -61,7 +62,7 @@ public class InstanceXmlFormat extends XmlFormat<Instance> {
 			notifier.addDeferredReferenceCreator(rc);
 			instance.setPosition(readPoint(reader, "position"));
 			String creationCode = reader.getStringElement("creationCode");
-			if (convertLineEndings) {
+			if (GmkSplitter.convertLineEndings) {
 				creationCode = Tools.toCrlf(creationCode);
 			}
 			instance.setCreationCode(creationCode);

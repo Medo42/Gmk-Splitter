@@ -16,6 +16,7 @@ import org.lateralgm.resources.Background.PBackground;
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 
 public class BackgroundXmlFormat extends XmlFormat<Background> {
 	@Override
@@ -25,7 +26,7 @@ public class BackgroundXmlFormat extends XmlFormat<Background> {
 			writer.putAttribute("id", background.getId());
 			boolean useAsTileset = background.get(PBackground.USE_AS_TILESET);
 			writer.putElement("useAsTileset", useAsTileset);
-			if (useAsTileset || !omitDisabledFields) {
+			if (useAsTileset || !GmkSplitter.omitDisabledFields) {
 				writer.startElement("tiles");
 				int width = background.get(PBackground.TILE_WIDTH);
 				int height = background.get(PBackground.TILE_HEIGHT);
@@ -55,7 +56,7 @@ public class BackgroundXmlFormat extends XmlFormat<Background> {
 			background.setId(reader.getIntAttribute("id"));
 			boolean useAsTileset = reader.getBoolElement("useAsTileset");
 			background.put(PBackground.USE_AS_TILESET, useAsTileset);
-			if (useAsTileset || !omitDisabledFields) {
+			if (useAsTileset || !GmkSplitter.omitDisabledFields) {
 				reader.enterElement("tiles");
 				Dimension size = readDimension(reader, "size");
 				background.put(PBackground.TILE_WIDTH, size.width);
