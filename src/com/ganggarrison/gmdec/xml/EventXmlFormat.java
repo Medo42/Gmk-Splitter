@@ -26,7 +26,7 @@ public class EventXmlFormat extends XmlFormat<Event> {
 		out.startElement("event");
 		{
 			out.putAttribute("category", LgmConst.toString((byte) event.mainId, MainEventType.class));
-			// TODO: Trigger events probably need special attention too.
+			// TODO: Trigger events need special attention too.
 			if (event.mainId == MainEvent.EV_COLLISION) {
 				out.putAttribute("with", getRefStr(event.other));
 			} else {
