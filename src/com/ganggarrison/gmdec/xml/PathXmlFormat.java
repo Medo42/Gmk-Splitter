@@ -27,7 +27,7 @@ public class PathXmlFormat extends XmlFormat<Path> {
 	public void write(Path path, XmlWriter writer) {
 		writer.startElement("path");
 		{
-			writer.putAttribute("id", path.getId());
+			writeIdAttribute(path, writer);
 			writer.startElement("points");
 			for (PathPoint pp : path.points) {
 				writer.startElement("point");
@@ -55,7 +55,7 @@ public class PathXmlFormat extends XmlFormat<Path> {
 
 		reader.enterElement("path");
 		{
-			path.setId(reader.getIntAttribute("id"));
+			readIdAttribute(path, reader);
 			reader.enterElement("points");
 			while (reader.hasNextElement()) {
 				reader.enterElement("point");

@@ -35,7 +35,9 @@ public class InstanceXmlFormat extends XmlFormat<Instance> {
 		writer.startElement("instance");
 		{
 			PropertyMap<PInstance> properties = instance.properties;
-			writer.putAttribute("id", properties.get(PInstance.ID));
+			if(GmkSplitter.preserveIds) {
+				writer.putAttribute("id", properties.get(PInstance.ID));
+			}
 			ResourceReference<GmObject> object = properties.get(PInstance.OBJECT);
 			writeResourceRef(writer, "object", object);
 			writePoint(writer, "position", instance.getPosition());
@@ -55,7 +57,9 @@ public class InstanceXmlFormat extends XmlFormat<Instance> {
 		reader.enterElement("instance");
 		{
 			PropertyMap<PInstance> properties = instance.properties;
-			properties.put(PInstance.ID, reader.getIntAttribute("id"));
+			if(GmkSplitter.preserveIds && reader.hasAttribute("id")) {
+				properties.put(PInstance.ID, reader.getIntAttribute("id"));
+			}
 			String objRef = readResourceRef(reader, "object");
 			DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PInstance>(
 					properties, PInstance.OBJECT, Kind.OBJECT, objRef);

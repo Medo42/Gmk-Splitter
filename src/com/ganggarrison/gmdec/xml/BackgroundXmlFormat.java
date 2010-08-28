@@ -23,7 +23,7 @@ public class BackgroundXmlFormat extends XmlFormat<Background> {
 	public void write(Background background, XmlWriter writer) {
 		writer.startElement("background");
 		{
-			writer.putAttribute("id", background.getId());
+			writeIdAttribute(background, writer);
 			boolean useAsTileset = background.get(PBackground.USE_AS_TILESET);
 			writer.putElement("useAsTileset", useAsTileset);
 			if (useAsTileset || !GmkSplitter.omitDisabledFields) {
@@ -53,7 +53,7 @@ public class BackgroundXmlFormat extends XmlFormat<Background> {
 		Background background = new Background();
 		reader.enterElement("background");
 		{
-			background.setId(reader.getIntAttribute("id"));
+			readIdAttribute(background, reader);
 			boolean useAsTileset = reader.getBoolElement("useAsTileset");
 			background.put(PBackground.USE_AS_TILESET, useAsTileset);
 			if (useAsTileset || !GmkSplitter.omitDisabledFields) {

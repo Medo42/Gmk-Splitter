@@ -22,7 +22,7 @@ public class SpriteXmlFormat extends XmlFormat<Sprite> {
 	public void write(Sprite sprite, XmlWriter writer) {
 		writer.startElement("sprite");
 		{
-			writer.putAttribute("id", sprite.getId());
+			writeIdAttribute(sprite, writer);
 			int originX = sprite.get(PSprite.ORIGIN_X);
 			int originY = sprite.get(PSprite.ORIGIN_Y);
 			writePoint(writer, "origin", new Point(originX, originY));
@@ -57,7 +57,7 @@ public class SpriteXmlFormat extends XmlFormat<Sprite> {
 		Sprite sprite = new Sprite();
 		reader.enterElement("sprite");
 		{
-			sprite.setId(reader.getIntAttribute("id"));
+			readIdAttribute(sprite, reader);
 			Point origin = readPoint(reader, "origin");
 			sprite.put(PSprite.ORIGIN_X, origin.x);
 			sprite.put(PSprite.ORIGIN_Y, origin.y);

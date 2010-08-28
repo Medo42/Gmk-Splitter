@@ -20,6 +20,7 @@ import org.lateralgm.resources.Script.PScript;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
+import com.ganggarrison.gmdec.GmkSplitter;
 
 public class ScriptFormat extends ResourceFormat<Script> {
 	@Override
@@ -32,11 +33,12 @@ public class ScriptFormat extends ResourceFormat<Script> {
 
 		Pattern pattern = Pattern.compile("/\\* !scriptId=(\\d+) \\*/\r\n");
 		Matcher matcher = pattern.matcher(code);
-		if (!matcher.find()) {
-			throw new IllegalArgumentException("Script file " + scriptFile + " does not start with ID definition!");
+		if (matcher.find()) {
+			if(GmkSplitter.preserveIds) {
+				script.setId(Integer.valueOf(matcher.group(1)));
+			}
+			code.delete(matcher.start(), matcher.end());
 		}
-		script.setId(Integer.valueOf(matcher.group(1)));
-		code.delete(matcher.start(), matcher.end());
 		script.put(PScript.CODE, code.toString());
 
 		return script;
@@ -51,7 +53,9 @@ public class ScriptFormat extends ResourceFormat<Script> {
 	public void write(File path, Script script, GmFile gmf) throws IOException {
 		File scriptFile = new File(path, defaultFilestring(script) + ".gml");
 		StringBuilder code = new StringBuilder(script.getCode());
-		code.insert(0, "/* !scriptId=" + script.getId() + " */\r\n");
+		if(GmkSplitter.preserveIds) {
+			code.insert(0, "/* !scriptId=" + script.getId() + " */\r\n");
+		}
 		FileTools.writeFile(scriptFile, code.toString());
 	}
 }

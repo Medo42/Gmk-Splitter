@@ -39,7 +39,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 	public void write(Room room, XmlWriter writer) {
 		writer.startElement("room");
 		{
-			writer.putAttribute("id", room.getId());
+			writeIdAttribute(room, writer);
 			writer.putElement("caption", room.get(PRoom.CAPTION));
 			int width = room.get(PRoom.WIDTH);
 			int height = room.get(PRoom.HEIGHT);
@@ -174,7 +174,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 		Room room = new Room();
 		reader.enterElement("room");
 		{
-			room.setId(reader.getIntAttribute("id"));
+			readIdAttribute(room, reader);
 			room.put(PRoom.CAPTION, reader.getStringElement("caption"));
 			Dimension size = readDimension(reader, "size");
 			room.put(PRoom.WIDTH, size.width);
