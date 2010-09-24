@@ -12,6 +12,7 @@ import org.lateralgm.resources.GameSettings;
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 import com.ganggarrison.gmdec.LgmConst;
 import com.ganggarrison.gmdec.Tools;
 
@@ -123,7 +124,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			writer.putElement("alwaysOnTop", settings.alwaysOnTop);
 			writer.putElement("dontShowButtons", settings.dontShowButtons);
 			writer.putElement("switchVideoMode", settings.setResolution);
-			if (settings.setResolution || !omitDisabledFields) {
+			if (settings.setResolution || !GmkSplitter.omitDisabledFields) {
 				writer.startElement("videoMode");
 				writer.putElement("colorDepth", LgmConst.toString(settings.colorDepth, ColorDepth.class));
 				writer.putElement("resolution", LgmConst.toString(settings.resolution, Resolution.class));
@@ -219,7 +220,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			settings.alwaysOnTop = reader.getBoolElement("alwaysOnTop");
 			settings.dontShowButtons = reader.getBoolElement("dontShowButtons");
 			settings.setResolution = reader.getBoolElement("switchVideoMode");
-			if (settings.setResolution || !omitDisabledFields) {
+			if (settings.setResolution || !GmkSplitter.omitDisabledFields) {
 				reader.enterElement("videoMode");
 				settings.colorDepth = LgmConst.fromString(reader.getStringElement("colorDepth"), ColorDepth.class);
 				settings.resolution = LgmConst.fromString(reader.getStringElement("resolution"), Resolution.class);

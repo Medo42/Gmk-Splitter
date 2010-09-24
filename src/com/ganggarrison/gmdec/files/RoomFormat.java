@@ -10,9 +10,7 @@ package com.ganggarrison.gmdec.files;
 import java.io.File;
 import java.io.IOException;
 
-import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.Room;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
@@ -24,11 +22,6 @@ public class RoomFormat extends ResourceFormat<Room> {
 		Room room = new RoomXmlFormat().read(getXmlFile(path, resourceName), drcn);
 		room.setName(resourceName);
 		return room;
-	}
-
-	@Override
-	public void addResToGmFile(Room resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent, Kind.ROOM);
 	}
 
 	@Override

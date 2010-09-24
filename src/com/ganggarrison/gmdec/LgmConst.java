@@ -15,7 +15,7 @@ public final class LgmConst {
 				return lcp.toString();
 			}
 		}
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Error: Found "+enumType+" with unknown integer constant "+lgmConst+".");
 	}
 
 	public static <T extends Enum<? extends Provider>> byte fromString(String string, Class<T> enumType) {

@@ -14,9 +14,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.Sprite;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
@@ -58,11 +56,6 @@ public class SpriteFormat extends ResourceFormat<Sprite> {
 			System.err.println("The image directory " + imagesDir
 					+ " contains non-consecutive indices. Images after the first index gap won't be processed.");
 		}
-	}
-
-	@Override
-	public void addResToGmFile(Sprite resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent, Kind.SPRITE);
 	}
 
 	@Override

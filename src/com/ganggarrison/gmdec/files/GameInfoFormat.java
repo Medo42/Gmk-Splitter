@@ -19,7 +19,7 @@ import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
 import com.ganggarrison.gmdec.xml.GameInfoXmlFormat;
 
-public class GameInfoFormat extends ResourceFormat<GameInformation> {
+public class GameInfoFormat extends FileTreeFormat<GameInformation> {
 	private static final String filename = "Game Information";
 
 	@Override

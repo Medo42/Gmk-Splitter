@@ -23,7 +23,7 @@ import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
 import com.ganggarrison.gmdec.xml.GameSettingsXmlFormat;
 
-public class GameSettingsFormat extends ResourceFormat<GameSettings> {
+public class GameSettingsFormat extends FileTreeFormat<GameSettings> {
 	private static final String xmlFilename = "Global Game Settings.xml";
 	private static final String frontLoadBarFilename = "loadbar front.png";
 	private static final String backLoadBarFilename = "loadbar background.png";

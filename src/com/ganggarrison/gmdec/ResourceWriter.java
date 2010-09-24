@@ -23,7 +23,7 @@ import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
 import com.ganggarrison.gmdec.files.ExtensionsFormat;
 import com.ganggarrison.gmdec.files.GameInfoFormat;
 import com.ganggarrison.gmdec.files.GameSettingsFormat;
-import com.ganggarrison.gmdec.files.ResourceFormat;
+import com.ganggarrison.gmdec.files.FileTreeFormat;
 import com.ganggarrison.gmdec.xml.ResourceListXmlFormat;
 
 public class ResourceWriter {
@@ -102,7 +102,7 @@ public class ResourceWriter {
 				groupResList.add(new ResourceTreeEntry(childName, Type.GROUP));
 			} else {
 				if (child.getRes() != null) {
-					ResourceFormat format = type.format;
+					FileTreeFormat format = type.format;
 					Resource<?, ?> resource = child.getRes().get();
 					format.write(path, resource, gmf);
 					groupResList.add(new ResourceTreeEntry(resource.getName(), Type.RESOURCE));

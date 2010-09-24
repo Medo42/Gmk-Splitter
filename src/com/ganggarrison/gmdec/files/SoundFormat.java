@@ -10,9 +10,7 @@ package com.ganggarrison.gmdec.files;
 import java.io.File;
 import java.io.IOException;
 
-import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.Sound;
 import org.lateralgm.resources.Sound.PSound;
 
@@ -31,11 +29,6 @@ public class SoundFormat extends ResourceFormat<Sound> {
 			sound.data = FileTools.readWholeFileBytes(soundfile);
 		}
 		return sound;
-	}
-
-	@Override
-	public void addResToGmFile(Sound resource, GmFile gmf, ResNode parent) {
-		addResToTree(resource, gmf, parent, Kind.SOUND);
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredPropertyReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 import com.ganggarrison.gmdec.Tools;
 
 public class InstanceXmlFormat extends XmlFormat<Instance> {
@@ -34,12 +35,14 @@ public class InstanceXmlFormat extends XmlFormat<Instance> {
 		writer.startElement("instance");
 		{
 			PropertyMap<PInstance> properties = instance.properties;
-			writer.putAttribute("id", properties.get(PInstance.ID));
+			if(GmkSplitter.preserveIds) {
+				writer.putAttribute("id", properties.get(PInstance.ID));
+			}
 			ResourceReference<GmObject> object = properties.get(PInstance.OBJECT);
 			writeResourceRef(writer, "object", object);
 			writePoint(writer, "position", instance.getPosition());
 			String creationCode = instance.getCreationCode();
-			if (convertLineEndings) {
+			if (GmkSplitter.convertLineEndings) {
 				creationCode = Tools.toLf(creationCode);
 			}
 			writer.putElement("creationCode", creationCode);
@@ -54,14 +57,16 @@ public class InstanceXmlFormat extends XmlFormat<Instance> {
 		reader.enterElement("instance");
 		{
 			PropertyMap<PInstance> properties = instance.properties;
-			properties.put(PInstance.ID, reader.getIntAttribute("id"));
+			if(GmkSplitter.preserveIds && reader.hasAttribute("id")) {
+				properties.put(PInstance.ID, reader.getIntAttribute("id"));
+			}
 			String objRef = readResourceRef(reader, "object");
 			DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PInstance>(
 					properties, PInstance.OBJECT, Kind.OBJECT, objRef);
 			notifier.addDeferredReferenceCreator(rc);
 			instance.setPosition(readPoint(reader, "position"));
 			String creationCode = reader.getStringElement("creationCode");
-			if (convertLineEndings) {
+			if (GmkSplitter.convertLineEndings) {
 				creationCode = Tools.toCrlf(creationCode);
 			}
 			instance.setCreationCode(creationCode);

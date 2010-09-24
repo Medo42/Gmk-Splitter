@@ -19,7 +19,7 @@ public class SoundXmlFormat extends XmlFormat<Sound> {
 	public void write(Sound sound, XmlWriter writer) {
 		writer.startElement("sound");
 		{
-			writer.putAttribute("id", sound.getId());
+			writeIdAttribute(sound, writer);
 			writer.putElement("filename", sound.get(PSound.FILE_NAME));
 			writer.putElement("filetype", sound.get(PSound.FILE_TYPE));
 			writer.putElement("kind", sound.get(PSound.KIND));
@@ -45,7 +45,7 @@ public class SoundXmlFormat extends XmlFormat<Sound> {
 		Sound sound = new Sound();
 		reader.enterElement("sound");
 		{
-			sound.setId(reader.getIntAttribute("id"));
+			readIdAttribute(sound, reader);
 			sound.put(PSound.FILE_NAME, reader.getStringElement("filename"));
 			sound.put(PSound.FILE_TYPE, reader.getStringElement("filetype"));
 			String kind = reader.getStringElement("kind");
