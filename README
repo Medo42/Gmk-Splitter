@@ -22,22 +22,10 @@ versions *should* work, but the output .gmk file will always be in GM8 format.
 Not all data contained in GM8 files is converted yet, and some (like timestamps)
 will never be supported because they are not useful for the purpose of this tool.
 
-IDs of resources, instances and tiles can change in the reassembling process if
-they conflict with other IDs. This usually happens when two versions that have
-evolved in parallel are merged. As long as your game doesn't reference resources,
-instances or tiles by their numeric ID, and you don't rely on a specific execution
-order of the events among instances, these changes shouldn't affect the function
-of your game. You will be notified by the tool if IDs change.
-
-GMK Splitter hasn't been extensively tested yet and may very well contain serious bugs.
-Don't rely on its output being equivalent to the input. You should e.g. keep
-backup copies of .gmk files even if you put the file tree under version control.
-(Keeping the .gmk file itself under verison control is problematic since it
-causes merge conflicts).
-
 These features are currently not supported but will be in later versions:
 - Triggers
 - Included files
+- Optional retention of resource, tile and instance IDs
 
 These features are not supported and might not make it later either:
 - Action Libraries
@@ -45,3 +33,21 @@ These features are not supported and might not make it later either:
 These features won't be supported:
 - ID of last instance/tile
 - Timestamps (last modification of individual resources)
+
+IDs of resources, instances and tiles are not stored with the game data. In previous
+versions the tool tried to keep this information intact, but this strategy has led to
+unneccessary problems with otherwise unproblematic merges, and the tool couldn't give a
+guarantee to keep them intact anyway. As long as your game doesn't reference resources,
+instances or tiles by their numeric ID, and you don't rely on a specific execution
+order of the events among instances, the loss of ID information shouldn't affect the
+function of your game.
+
+Since keeping IDs intact might be important for other uses of this tool, the code was
+not completely removed. A command line interface to expose this option will be added
+in the future.
+
+GMK Splitter hasn't been extensively tested yet and may very well contain serious bugs.
+Don't rely on its output being equivalent to the input. You should e.g. keep
+backup copies of .gmk files even if you put the file tree under version control.
+(Keeping the .gmk file itself under verison control is problematic since it
+causes merge conflicts).
