@@ -20,7 +20,7 @@ public class FontXmlFormat extends XmlFormat<Font> {
 	public void write(Font font, XmlWriter writer) {
 		writer.startElement("font");
 		{
-			writer.putAttribute("id", font.getId());
+			writeIdAttribute(font, writer);
 			writer.putElement("fontName", font.get(PFont.FONT_NAME));
 			writer.putElement("bold", font.get(PFont.BOLD));
 			writer.putElement("italic", font.get(PFont.ITALIC));
@@ -36,7 +36,7 @@ public class FontXmlFormat extends XmlFormat<Font> {
 		Font font = new Font();
 		reader.enterElement("font");
 		{
-			font.setId(reader.getIntAttribute("id"));
+			readIdAttribute(font, reader);
 			font.put(PFont.FONT_NAME, reader.getStringElement("fontName"));
 			font.put(PFont.BOLD, reader.getBoolElement("bold"));
 			font.put(PFont.ITALIC, reader.getBoolElement("italic"));

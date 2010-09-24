@@ -25,7 +25,7 @@ public class GmObjectXmlFormat extends XmlFormat<GmObject> {
 	public void write(GmObject gmObject, XmlWriter out) {
 		out.startElement("object");
 		{
-			out.putAttribute("id", gmObject.getId());
+			writeIdAttribute(gmObject, out);
 			writeResourceRef(out, "sprite", (ResourceReference<?>) gmObject.get(PGmObject.SPRITE));
 			out.putElement("solid", gmObject.get(PGmObject.SOLID));
 			out.putElement("visible", gmObject.get(PGmObject.VISIBLE));
@@ -42,7 +42,7 @@ public class GmObjectXmlFormat extends XmlFormat<GmObject> {
 		GmObject gmObject = new GmObject();
 		reader.enterElement("object");
 		{
-			gmObject.setId(reader.getIntAttribute("id"));
+			readIdAttribute(gmObject, reader);
 			String spriteRef = readResourceRef(reader, "sprite");
 			DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PGmObject>(
 					gmObject.properties, PGmObject.SPRITE, Kind.SPRITE, spriteRef);

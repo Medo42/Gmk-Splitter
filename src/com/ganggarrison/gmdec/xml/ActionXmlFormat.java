@@ -25,6 +25,7 @@ import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 import com.ganggarrison.gmdec.LgmConst;
 import com.ganggarrison.gmdec.Tools;
 
@@ -65,7 +66,7 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 				if (Argument.getResourceKind(arg.kind) != null) {
 					ResourceReference<? extends Resource<?, ?>> ref = arg.getRes();
 					out.putText(getRefStr(ref));
-				} else if (convertLineEndings && la.execType == Action.EXEC_CODE && arg.kind == Argument.ARG_STRING) {
+				} else if (GmkSplitter.convertLineEndings && la.execType == Action.EXEC_CODE && arg.kind == Argument.ARG_STRING) {
 					out.putText(Tools.toLf(arg.getVal()));
 				} else {
 					out.putText(arg.getVal());
@@ -116,7 +117,7 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 					arc.setReference(ref, Argument.getResourceKind(kind));
 					notifier.addDeferredReferenceCreator(arc);
 				}
-			} else if (convertLineEndings && la.execType == Action.EXEC_CODE && arg.kind == Argument.ARG_STRING) {
+			} else if (GmkSplitter.convertLineEndings && la.execType == Action.EXEC_CODE && arg.kind == Argument.ARG_STRING) {
 				arg.setVal(Tools.toCrlf(reader.getTextContent()));
 			} else {
 				arg.setVal(reader.getTextContent());

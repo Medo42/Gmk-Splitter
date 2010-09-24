@@ -21,7 +21,7 @@ public class TimelineXmlFormat extends XmlFormat<Timeline> {
 	public void write(Timeline timeline, XmlWriter writer) {
 		writer.startElement("timeline");
 		{
-			writer.putAttribute("id", timeline.getId());
+			writeIdAttribute(timeline, writer);
 			for (Moment moment : timeline.moments) {
 				writer.startElement("moment");
 				writer.putAttribute("stepNo", moment.stepNo);
@@ -40,7 +40,7 @@ public class TimelineXmlFormat extends XmlFormat<Timeline> {
 		Timeline timeline = new Timeline();
 		reader.enterElement("timeline");
 		{
-			timeline.setId(reader.getIntAttribute("id"));
+			readIdAttribute(timeline, reader);
 			while (reader.hasNextElement()) {
 				Moment moment = timeline.addMoment();
 				reader.enterElement("moment");

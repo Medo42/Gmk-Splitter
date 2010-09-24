@@ -19,6 +19,7 @@ import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredPropertyReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 
 public class TileXmlFormat extends XmlFormat<Tile> {
 	private Room room;
@@ -31,7 +32,9 @@ public class TileXmlFormat extends XmlFormat<Tile> {
 	public void write(Tile tile, XmlWriter writer) {
 		writer.startElement("tile");
 		{
-			writer.putAttribute("id", tile.properties.get(PTile.ID));
+			if(GmkSplitter.preserveIds) {
+				writer.putAttribute("id", tile.properties.get(PTile.ID));
+			}
 			ResourceReference<Background> bgRef = tile.properties.get(PTile.BACKGROUND);
 			writeResourceRef(writer, "background", bgRef);
 			writePoint(writer, "backgroundPosition", tile.getBackgroundPosition());
@@ -48,7 +51,10 @@ public class TileXmlFormat extends XmlFormat<Tile> {
 		Tile tile;
 		reader.enterElement("tile");
 		{
-			tile = new Tile(room, reader.getIntAttribute("id"));
+			tile = new Tile(room);
+			if(GmkSplitter.preserveIds && reader.hasAttribute("id")) {
+				tile.properties.put(PTile.ID, reader.getIntAttribute("id"));
+			}
 			String objRef = readResourceRef(reader, "background");
 			DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PTile>(
 					tile.properties, PTile.BACKGROUND, Kind.BACKGROUND, objRef);

@@ -12,16 +12,15 @@ import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 
+import org.lateralgm.resources.Resource;
 import org.lateralgm.resources.ResourceReference;
 
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 
 public abstract class XmlFormat<T> {
-	protected boolean convertLineEndings = true;
-	protected boolean omitDisabledFields = true;
-
 	public abstract void write(T object, XmlWriter writer);
 
 	public abstract T read(XmlReader reader, DeferredReferenceCreatorNotifier notifier);
@@ -84,5 +83,17 @@ public abstract class XmlFormat<T> {
 		int height = reader.getIntAttribute("height");
 		reader.leaveElement();
 		return new Dimension(width, height);
+	}
+	
+	protected void writeIdAttribute(Resource<?, ?> resource, XmlWriter writer) {
+		if(GmkSplitter.preserveIds) {
+			writer.putAttribute("id", resource.getId());
+		}
+	}
+	
+	protected void readIdAttribute(Resource<?, ?> resource, XmlReader reader) {
+		if(GmkSplitter.preserveIds && reader.hasAttribute("id")) {
+			resource.setId(reader.getIntAttribute("id"));
+		}
 	}
 }

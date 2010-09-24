@@ -71,57 +71,67 @@ public class ResourceReader {
 		notifier.createReferences(gmf);
 	}
 
+	private static final int FIRST_TILE_ID = 10000001;
+	
 	private static void postprocessTiles(GmFile gmf) {
 		HashSet<Integer> usedTileNums = new HashSet<Integer>();
-		ArrayList<Tile> duplicateTiles = new ArrayList<Tile>();
-
-		int lastId = 10000000;
+		ArrayList<Tile> tilesWithoutId = new ArrayList<Tile>();
+		int duplicates = 0;
+		
+		gmf.lastTileId = FIRST_TILE_ID-1;
 		for (Room room : gmf.rooms) {
 			for (Tile tile : room.tiles) {
 				int id = tile.properties.get(PTile.ID);
-				lastId = Math.max(id, lastId);
-				if (usedTileNums.contains(id)) {
-					duplicateTiles.add(tile);
+				gmf.lastTileId = Math.max(id, gmf.lastTileId);
+				if (id < FIRST_TILE_ID) {
+					tilesWithoutId.add(tile);
+				} else if(usedTileNums.contains(id)) {
+					duplicates++;
+					tilesWithoutId.add(tile);
 				} else {
 					usedTileNums.add(id);
 				}
 			}
 		}
 
-		for (Tile dupe : duplicateTiles) {
-			dupe.properties.put(PTile.ID, ++lastId);
+		for (Tile tile : tilesWithoutId) {
+			tile.properties.put(PTile.ID, ++gmf.lastTileId);
 		}
 
-		gmf.lastTileId = lastId;
-		if (!duplicateTiles.isEmpty()) {
-			System.err.println(duplicateTiles.size() + " duplicate tile IDs have been changed.");
+		if (duplicates > 0) {
+			System.err.println(duplicates + " duplicate tile IDs have been changed.");
 		}
 	}
 
+	private static final int FIRST_INSTANCE_ID = 100001;
+	
 	private static void postprocessInstances(GmFile gmf) {
 		HashSet<Integer> usedInstanceNums = new HashSet<Integer>();
-		ArrayList<Instance> duplicateInstances = new ArrayList<Instance>();
-
-		int lastId = 100000;
+		ArrayList<Instance> instancesWithoutId = new ArrayList<Instance>();
+		int duplicates = 0;
+		
+		gmf.lastInstanceId = FIRST_INSTANCE_ID-1;
 		for (Room room : gmf.rooms) {
 			for (Instance instance : room.instances) {
 				int id = instance.properties.get(PInstance.ID);
-				lastId = Math.max(id, lastId);
-				if (usedInstanceNums.contains(id)) {
-					duplicateInstances.add(instance);
+				gmf.lastInstanceId = Math.max(id, gmf.lastInstanceId);
+				if (id < FIRST_INSTANCE_ID) {
+					instancesWithoutId.add(instance);
+				} else if (usedInstanceNums.contains(id)) {
+					duplicates++;
+					instancesWithoutId.add(instance);
 				} else {
 					usedInstanceNums.add(id);
 				}
 			}
 		}
 
-		for (Instance dupe : duplicateInstances) {
-			dupe.properties.put(PInstance.ID, ++lastId);
+		for (Instance instance : instancesWithoutId) {
+			instance.properties.put(PInstance.ID, ++gmf.lastInstanceId);
 		}
 
-		gmf.lastInstanceId = lastId;
-		if (!duplicateInstances.isEmpty()) {
-			System.err.println(duplicateInstances.size() + " duplicate instance IDs have been changed.");
+		if (duplicates > 0) {
+			System.err.println(duplicates + " duplicate instance IDs have been changed.");
 		}
 	}
 

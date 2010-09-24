@@ -99,17 +99,21 @@ public class XmlReader {
 	}
 
 	public String getStringAttribute(String attributeName) {
-		if (!currentParent.hasAttribute(attributeName)) {
+		if (!hasAttribute(attributeName)) {
 			throw new IllegalArgumentException("Attribute with name " + attributeName + " expected in element "
 					+ currentParent.getTagName() + " but not found.");
 		}
 		return currentParent.getAttribute(attributeName);
 	}
 
+	public boolean hasAttribute(String attribName) {
+		return currentParent.hasAttribute(attribName);
+	}
+	
 	public String getTextContent() {
 		return currentParent.getTextContent();
 	}
-
+	
 	public boolean hasNextElement() {
 		return getNextChildElement() != null;
 	}

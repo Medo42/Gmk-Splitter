@@ -15,13 +15,14 @@ import org.lateralgm.resources.Sprite.PSprite;
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 
 public class SpriteXmlFormat extends XmlFormat<Sprite> {
 	@Override
 	public void write(Sprite sprite, XmlWriter writer) {
 		writer.startElement("sprite");
 		{
-			writer.putAttribute("id", sprite.getId());
+			writeIdAttribute(sprite, writer);
 			int originX = sprite.get(PSprite.ORIGIN_X);
 			int originY = sprite.get(PSprite.ORIGIN_Y);
 			writePoint(writer, "origin", new Point(originX, originY));
@@ -34,7 +35,7 @@ public class SpriteXmlFormat extends XmlFormat<Sprite> {
 					Sprite.BBMode mode = sprite.get(PSprite.BB_MODE);
 					writer.putAttribute("mode", mode);
 					writer.putAttribute("alphaTolerance", sprite.get(PSprite.ALPHA_TOLERANCE));
-					if (mode == Sprite.BBMode.MANUAL || !omitDisabledFields) {
+					if (mode == Sprite.BBMode.MANUAL || !GmkSplitter.omitDisabledFields) {
 						writer.putElement("left", sprite.get(PSprite.BB_LEFT));
 						writer.putElement("right", sprite.get(PSprite.BB_RIGHT));
 						writer.putElement("top", sprite.get(PSprite.BB_TOP));
@@ -56,7 +57,7 @@ public class SpriteXmlFormat extends XmlFormat<Sprite> {
 		Sprite sprite = new Sprite();
 		reader.enterElement("sprite");
 		{
-			sprite.setId(reader.getIntAttribute("id"));
+			readIdAttribute(sprite, reader);
 			Point origin = readPoint(reader, "origin");
 			sprite.put(PSprite.ORIGIN_X, origin.x);
 			sprite.put(PSprite.ORIGIN_Y, origin.y);
@@ -70,7 +71,7 @@ public class SpriteXmlFormat extends XmlFormat<Sprite> {
 					Sprite.BBMode mode = Sprite.BBMode.valueOf(reader.getStringAttribute("mode"));
 					sprite.put(PSprite.BB_MODE, mode);
 					sprite.put(PSprite.ALPHA_TOLERANCE, reader.getIntAttribute("alphaTolerance"));
-					if (mode == Sprite.BBMode.MANUAL || !omitDisabledFields) {
+					if (mode == Sprite.BBMode.MANUAL || !GmkSplitter.omitDisabledFields) {
 						sprite.put(PSprite.BB_LEFT, reader.getIntElement("left"));
 						sprite.put(PSprite.BB_RIGHT, reader.getIntElement("right"));
 						sprite.put(PSprite.BB_TOP, reader.getIntElement("top"));
