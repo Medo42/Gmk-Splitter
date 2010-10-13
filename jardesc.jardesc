@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="C:/Users/simmax/Desktop/gmksplit.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/GmkSplitter/jardesc.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=GmkSplitter/src&lt;com.ganggarrison.gmdec{GmkSplitter.java[GmkSplitter" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.resources"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.components"/>
+        <file path="/GmkSplitter/LICENSE"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.resources.library"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.file"/>
+        <file path="/GmkSplitter/.project"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.components.visual"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.resources.sub"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.compare"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.components.mdi"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.file.iconio"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.util"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.ui.swing.util"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.subframes"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.icons.restree"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.components.impl"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.messages"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.icons.events"/>
+        <file path="/GmkSplitter/COPYING"/>
+        <file path="/GmkSplitter/README"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.ui.swing.visuals"/>
+        <file path="/GmkSplitter/.classpath"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.main"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.icons.actions"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.resources.library.lib"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.icons"/>
+        <javaElement handleIdentifier="=GmkSplitter/src"/>
+        <file path="/GmkSplitter/.gitignore"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.ui.swing.propertylink"/>
+        <javaElement handleIdentifier="=LateralGM/&lt;org.lateralgm.jedit"/>
+    </selectedElements>
+</jardesc>

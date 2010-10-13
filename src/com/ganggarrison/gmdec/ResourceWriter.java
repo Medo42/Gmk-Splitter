@@ -33,9 +33,10 @@ public class ResourceWriter {
 			if (list != null) {
 				HashSet<String> names = new HashSet<String>();
 				for (Resource<?, ?> res : list) {
-					if (names.contains(res.getName())) {
+					if (names.contains(res.getName().toLowerCase())) {
 						throw new IOException("Duplicate " + resKind + " name " + res.getName());
 					}
+					names.add(res.getName().toLowerCase());
 				}
 			}
 		}
