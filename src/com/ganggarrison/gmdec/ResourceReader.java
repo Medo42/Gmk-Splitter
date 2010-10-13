@@ -10,28 +10,24 @@ package com.ganggarrison.gmdec;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.GameInformation;
 import org.lateralgm.resources.GameSettings;
-import org.lateralgm.resources.Room;
-import org.lateralgm.resources.sub.Instance;
-import org.lateralgm.resources.sub.Instance.PInstance;
-import org.lateralgm.resources.sub.Tile;
-import org.lateralgm.resources.sub.Tile.PTile;
 
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
+import com.ganggarrison.gmdec.dupes.InstanceAccessor;
+import com.ganggarrison.gmdec.dupes.OrderPreservingDupeRemoval;
+import com.ganggarrison.gmdec.dupes.TileAccessor;
 import com.ganggarrison.gmdec.files.ExtensionsFormat;
+import com.ganggarrison.gmdec.files.FileTreeFormat;
 import com.ganggarrison.gmdec.files.GameInfoFormat;
 import com.ganggarrison.gmdec.files.GameSettingsFormat;
-import com.ganggarrison.gmdec.files.FileTreeFormat;
 import com.ganggarrison.gmdec.xml.ResourceListXmlFormat;
 
 public class ResourceReader {
@@ -65,74 +61,10 @@ public class ResourceReader {
 		List<String> extensions = new ExtensionsFormat().read(sourcePath, null, notifier);
 		new ExtensionsFormat().addResToGmFile(extensions, gmf, root);
 
-		postprocessTiles(gmf);
-		postprocessInstances(gmf);
+		OrderPreservingDupeRemoval.perform(new TileAccessor(gmf));
+		OrderPreservingDupeRemoval.perform(new InstanceAccessor(gmf));
 
 		notifier.createReferences(gmf);
-	}
-
-	private static final int FIRST_TILE_ID = 10000001;
-	
-	private static void postprocessTiles(GmFile gmf) {
-		HashSet<Integer> usedTileNums = new HashSet<Integer>();
-		ArrayList<Tile> tilesWithoutId = new ArrayList<Tile>();
-		int duplicates = 0;
-		
-		gmf.lastTileId = FIRST_TILE_ID-1;
-		for (Room room : gmf.rooms) {
-			for (Tile tile : room.tiles) {
-				int id = tile.properties.get(PTile.ID);
-				gmf.lastTileId = Math.max(id, gmf.lastTileId);
-				if (id < FIRST_TILE_ID) {
-					tilesWithoutId.add(tile);
-				} else if(usedTileNums.contains(id)) {
-					duplicates++;
-					tilesWithoutId.add(tile);
-				} else {
-					usedTileNums.add(id);
-				}
-			}
-		}
-
-		for (Tile tile : tilesWithoutId) {
-			tile.properties.put(PTile.ID, ++gmf.lastTileId);
-		}
-
-		if (duplicates > 0) {
-			System.err.println(duplicates + " duplicate tile IDs have been changed.");
-		}
-	}
-
-	private static final int FIRST_INSTANCE_ID = 100001;
-	
-	private static void postprocessInstances(GmFile gmf) {
-		HashSet<Integer> usedInstanceNums = new HashSet<Integer>();
-		ArrayList<Instance> instancesWithoutId = new ArrayList<Instance>();
-		int duplicates = 0;
-		
-		gmf.lastInstanceId = FIRST_INSTANCE_ID-1;
-		for (Room room : gmf.rooms) {
-			for (Instance instance : room.instances) {
-				int id = instance.properties.get(PInstance.ID);
-				gmf.lastInstanceId = Math.max(id, gmf.lastInstanceId);
-				if (id < FIRST_INSTANCE_ID) {
-					instancesWithoutId.add(instance);
-				} else if (usedInstanceNums.contains(id)) {
-					duplicates++;
-					instancesWithoutId.add(instance);
-				} else {
-					usedInstanceNums.add(id);
-				}
-			}
-		}
-
-		for (Instance instance : instancesWithoutId) {
-			instance.properties.put(PInstance.ID, ++gmf.lastInstanceId);
-		}
-
-		if (duplicates > 0) {
-			System.err.println(duplicates + " duplicate instance IDs have been changed.");
-		}
 	}
 
 	private static class SubtreeReader {

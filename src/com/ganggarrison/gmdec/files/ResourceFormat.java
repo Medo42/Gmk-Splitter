@@ -7,6 +7,7 @@ import org.lateralgm.resources.Resource;
 import org.lateralgm.resources.Resource.Kind;
 
 public abstract class ResourceFormat<T extends Resource<T, ?>> extends FileTreeFormat<T> {
+	// TODO Improve ID conflict behaviour
 	@Override
 	public final void addResToGmFile(T resource, GmFile gmf, ResNode parent) {
 		Kind kind = resource.getKind();
