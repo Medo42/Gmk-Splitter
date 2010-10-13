@@ -20,6 +20,7 @@ import com.ganggarrison.gmdec.DeferredPropertyReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreator;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.GmkSplitter;
+import com.ganggarrison.gmdec.GmkSplitter.IdPreservation;
 
 public class TileXmlFormat extends XmlFormat<Tile> {
 	private Room room;
@@ -32,7 +33,7 @@ public class TileXmlFormat extends XmlFormat<Tile> {
 	public void write(Tile tile, XmlWriter writer) {
 		writer.startElement("tile");
 		{
-			if(GmkSplitter.preserveIds) {
+			if (GmkSplitter.preserveIds == IdPreservation.ALL) {
 				writer.putAttribute("id", tile.properties.get(PTile.ID));
 			}
 			ResourceReference<Background> bgRef = tile.properties.get(PTile.BACKGROUND);
@@ -52,7 +53,7 @@ public class TileXmlFormat extends XmlFormat<Tile> {
 		reader.enterElement("tile");
 		{
 			tile = new Tile(room);
-			if(GmkSplitter.preserveIds && reader.hasAttribute("id")) {
+			if (GmkSplitter.preserveIds == IdPreservation.ALL && reader.hasAttribute("id")) {
 				tile.properties.put(PTile.ID, reader.getIntAttribute("id"));
 			}
 			String objRef = readResourceRef(reader, "background");

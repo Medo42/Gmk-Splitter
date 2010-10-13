@@ -13,12 +13,14 @@ import java.io.File;
 import java.io.IOException;
 
 import org.lateralgm.resources.Resource;
+import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.ResourceReference;
 
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.GmkSplitter;
+import com.ganggarrison.gmdec.GmkSplitter.IdPreservation;
 
 public abstract class XmlFormat<T> {
 	public abstract void write(T object, XmlWriter writer);
@@ -86,14 +88,24 @@ public abstract class XmlFormat<T> {
 	}
 	
 	protected void writeIdAttribute(Resource<?, ?> resource, XmlWriter writer) {
-		if(GmkSplitter.preserveIds) {
+		if (preserveId(resource)) {
 			writer.putAttribute("id", resource.getId());
 		}
 	}
 	
 	protected void readIdAttribute(Resource<?, ?> resource, XmlReader reader) {
-		if(GmkSplitter.preserveIds && reader.hasAttribute("id")) {
+		if (preserveId(resource) && reader.hasAttribute("id")) {
 			resource.setId(reader.getIntAttribute("id"));
 		}
+	}
+
+	private boolean preserveId(Resource<?, ?> resource) {
+		if (GmkSplitter.preserveIds == IdPreservation.ALL) {
+			return true;
+		}
+		if (GmkSplitter.preserveIds == IdPreservation.OBJECTS_INSTANCES && resource.getKind() == Kind.OBJECT) {
+			return true;
+		}
+		return false;
 	}
 }

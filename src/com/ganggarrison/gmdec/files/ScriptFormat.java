@@ -19,6 +19,7 @@ import org.lateralgm.resources.Script.PScript;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
 import com.ganggarrison.gmdec.GmkSplitter;
+import com.ganggarrison.gmdec.GmkSplitter.IdPreservation;
 
 public class ScriptFormat extends ResourceFormat<Script> {
 	@Override
@@ -32,7 +33,7 @@ public class ScriptFormat extends ResourceFormat<Script> {
 		Pattern pattern = Pattern.compile("/\\* !scriptId=(\\d+) \\*/\r\n");
 		Matcher matcher = pattern.matcher(code);
 		if (matcher.find()) {
-			if(GmkSplitter.preserveIds) {
+			if (GmkSplitter.preserveIds == IdPreservation.ALL) {
 				script.setId(Integer.valueOf(matcher.group(1)));
 			}
 			code.delete(matcher.start(), matcher.end());
@@ -46,7 +47,7 @@ public class ScriptFormat extends ResourceFormat<Script> {
 	public void write(File path, Script script, GmFile gmf) throws IOException {
 		File scriptFile = new File(path, defaultFilestring(script) + ".gml");
 		StringBuilder code = new StringBuilder(script.getCode());
-		if(GmkSplitter.preserveIds) {
+		if (GmkSplitter.preserveIds == IdPreservation.ALL) {
 			code.insert(0, "/* !scriptId=" + script.getId() + " */\r\n");
 		}
 		FileTools.writeFile(scriptFile, code.toString());
