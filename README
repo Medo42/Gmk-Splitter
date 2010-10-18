@@ -25,21 +25,21 @@ will never be supported because they are not useful for the purpose of this tool
 These features are currently not supported but will be in later versions:
 - Triggers
 - Included files
-- Optional retention of resource, tile and instance IDs
+- Optional retention of all IDs
 
 These features are not supported and might not make it later either:
 - Action Libraries
 
 These features won't be supported:
-- ID of last instance/tile
 - Timestamps (last modification of individual resources)
 
-IDs of resources, instances and tiles are not stored with the game data. In previous
+No IDs except those of Objects are stored with the game data. In early
 versions the tool tried to keep this information intact, but this strategy has led to
-unneccessary problems with otherwise unproblematic merges, and the tool couldn't give a
-guarantee to keep them intact anyway. As long as your game doesn't reference resources,
-instances or tiles by their numeric ID, and you don't rely on a specific execution
-order of the events among instances, the loss of ID information shouldn't affect the
+unneccessary problems with otherwise unproblematic merges. Version 0.8 got rid of IDs
+entirely, but this caused suble problems with the execution order of different instances.
+Now Object IDs are retained again to prevent this problem and minimise useless information
+in the tree format. As long as your game doesn't reference resources,
+instances or tiles by their numeric ID, the loss of ID information shouldn't affect the
 function of your game.
 
 Since keeping IDs intact might be important for other uses of this tool, the code was
