@@ -10,6 +10,7 @@ package com.ganggarrison.gmdec.files;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -58,9 +59,16 @@ public class GameSettingsFormat extends FileTreeFormat<GameSettings> {
 	}
 
 	@Override
-	public void addResToGmFile(GameSettings settings, GmFile gmf, ResNode parent) {
-		gmf.gameSettings = settings;
+	public void addResToTree(GameSettings resource, ResNode parent) {
 		parent.addChild("Global Game Settings", ResNode.STATUS_SECONDARY, Resource.Kind.GAMESETTINGS);
+	}
+
+	@Override
+	public void addAllResourcesToGmFile(List<GameSettings> resources, GmFile gmf) {
+		if (resources.size() != 1) {
+			throw new IllegalArgumentException("There is only one game settings object.");
+		}
+		gmf.gameSettings = resources.get(0);
 	}
 
 	@Override
@@ -91,5 +99,4 @@ public class GameSettingsFormat extends FileTreeFormat<GameSettings> {
 			}
 		}
 	}
-
 }

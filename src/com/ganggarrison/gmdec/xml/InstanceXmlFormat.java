@@ -36,7 +36,7 @@ public class InstanceXmlFormat extends XmlFormat<Instance> {
 		writer.startElement("instance");
 		{
 			PropertyMap<PInstance> properties = instance.properties;
-			if (preserveInstanceIds()) {
+			if (GmkSplitter.preserveIds == IdPreservation.ALL) {
 				writer.putAttribute("id", properties.get(PInstance.ID));
 			}
 			ResourceReference<GmObject> object = properties.get(PInstance.OBJECT);
@@ -52,18 +52,13 @@ public class InstanceXmlFormat extends XmlFormat<Instance> {
 		writer.endElement();
 	}
 
-	private boolean preserveInstanceIds() {
-		return GmkSplitter.preserveIds == IdPreservation.ALL
-				|| GmkSplitter.preserveIds == IdPreservation.OBJECTS_INSTANCES;
-	}
-
 	@Override
 	public Instance read(XmlReader reader, DeferredReferenceCreatorNotifier notifier) {
 		Instance instance = new Instance(room);
 		reader.enterElement("instance");
 		{
 			PropertyMap<PInstance> properties = instance.properties;
-			if (preserveInstanceIds() && reader.hasAttribute("id")) {
+			if (GmkSplitter.preserveIds == IdPreservation.ALL && reader.hasAttribute("id")) {
 				properties.put(PInstance.ID, reader.getIntAttribute("id"));
 			}
 			String objRef = readResourceRef(reader, "object");

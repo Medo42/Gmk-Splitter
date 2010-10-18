@@ -9,6 +9,7 @@ package com.ganggarrison.gmdec.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
@@ -20,7 +21,22 @@ import com.ganggarrison.gmdec.FileTools;
 public abstract class FileTreeFormat<T> {
 	public abstract void write(File path, T resource, GmFile gmf) throws IOException;
 
-	public abstract void addResToGmFile(T resource, GmFile gmf, ResNode parent);
+	/**
+	 * Add a resource into the resource tree.
+	 * 
+	 * @param resource
+	 *            A resource read by this format
+	 * @param parent
+	 *            The parent node for this resource
+	 */
+	public abstract void addResToTree(T resource, ResNode parent);
+
+	/**
+	 * Add all resources of the type read by this format into the GmFile. This
+	 * method must be called with all resources of that type that should go into
+	 * the GmFile, so that ID conflicts can be properly resolved.
+	 */
+	public abstract void addAllResourcesToGmFile(List<T> resources, GmFile gmf);
 
 	public abstract T read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn)
 			throws IOException;

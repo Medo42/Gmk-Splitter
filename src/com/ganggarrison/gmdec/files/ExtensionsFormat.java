@@ -28,10 +28,17 @@ public class ExtensionsFormat extends FileTreeFormat<List<String>> {
 	}
 
 	@Override
-	public void addResToGmFile(List<String> extensions, GmFile gmf, ResNode parent) {
-		gmf.packages.clear();
-		gmf.packages.addAll(extensions);
+	public void addResToTree(List<String> resource, ResNode parent) {
 		parent.addChild("Extension Packages", ResNode.STATUS_SECONDARY, Resource.Kind.EXTENSIONS);
+	}
+
+	@Override
+	public void addAllResourcesToGmFile(List<List<String>> resources, GmFile gmf) {
+		if (resources.size() != 1) {
+			throw new IllegalArgumentException("There is only one extension package list.");
+		}
+		gmf.packages.clear();
+		gmf.packages.addAll(resources.get(0));
 	}
 
 	@Override

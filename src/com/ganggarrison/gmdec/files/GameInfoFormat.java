@@ -9,6 +9,7 @@ package com.ganggarrison.gmdec.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
@@ -33,9 +34,16 @@ public class GameInfoFormat extends FileTreeFormat<GameInformation> {
 	}
 
 	@Override
-	public void addResToGmFile(GameInformation resource, GmFile gmf, ResNode parent) {
-		gmf.gameInfo = resource;
+	public void addResToTree(GameInformation resource, ResNode parent) {
 		parent.addChild("Game Information", ResNode.STATUS_SECONDARY, Resource.Kind.GAMEINFO);
+	}
+
+	@Override
+	public void addAllResourcesToGmFile(List<GameInformation> resources, GmFile gmf) {
+		if (resources.size() != 1) {
+			throw new IllegalArgumentException("There is only one game info object.");
+		}
+		gmf.gameInfo = resources.get(0);
 	}
 
 	@Override

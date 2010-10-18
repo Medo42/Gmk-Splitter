@@ -103,7 +103,7 @@ public abstract class XmlFormat<T> {
 		if (GmkSplitter.preserveIds == IdPreservation.ALL) {
 			return true;
 		}
-		if (GmkSplitter.preserveIds == IdPreservation.OBJECTS_INSTANCES && resource.getKind() == Kind.OBJECT) {
+		if (GmkSplitter.preserveIds == IdPreservation.OBJECTS && resource.getKind() == Kind.OBJECT) {
 			return true;
 		}
 		return false;

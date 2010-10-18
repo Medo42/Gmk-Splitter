@@ -10,6 +10,7 @@ package com.ganggarrison.gmdec;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.GameInformation;
 import org.lateralgm.resources.GameSettings;
+import org.lateralgm.resources.Resource;
 
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
@@ -25,9 +27,9 @@ import com.ganggarrison.gmdec.dupes.InstanceAccessor;
 import com.ganggarrison.gmdec.dupes.OrderPreservingDupeRemoval;
 import com.ganggarrison.gmdec.dupes.TileAccessor;
 import com.ganggarrison.gmdec.files.ExtensionsFormat;
-import com.ganggarrison.gmdec.files.FileTreeFormat;
 import com.ganggarrison.gmdec.files.GameInfoFormat;
 import com.ganggarrison.gmdec.files.GameSettingsFormat;
+import com.ganggarrison.gmdec.files.ResourceFormat;
 import com.ganggarrison.gmdec.xml.ResourceListXmlFormat;
 
 public class ResourceReader {
@@ -37,7 +39,16 @@ public class ResourceReader {
 			PrimaryResourceType.ROOMS, PrimaryResourceType.PATHS, PrimaryResourceType.TIMELINES
 	};
 
-	public static void readTree(ResNode root, GmFile gmf, File sourcePath) throws IOException {
+	private final EnumMap<PrimaryResourceType, List<Resource<?, ?>>> resources;
+
+	public ResourceReader() {
+		resources = new EnumMap<PrimaryResourceType, List<Resource<?, ?>>>(PrimaryResourceType.class);
+		for (PrimaryResourceType prt : PrimaryResourceType.values()) {
+			resources.put(prt, new ArrayList<Resource<?, ?>>());
+		}
+	}
+
+	public void readTree(ResNode root, GmFile gmf, File sourcePath) throws IOException {
 		DeferredReferenceCreatorNotifier notifier = new DeferredReferenceCreatorNotifier();
 		EnumMap<PrimaryResourceType, ResNode> primaryNodes = new EnumMap<PrimaryResourceType, ResNode>(
 				PrimaryResourceType.class);
@@ -50,16 +61,28 @@ public class ResourceReader {
 		for (PrimaryResourceType prt : resTypeReadingOrder) {
 			File subdir = new File(sourcePath, prt.pathName);
 			if (subdir.isDirectory()) {
-				new SubtreeReader(gmf, prt, notifier).readSubtree(primaryNodes.get(prt), subdir);
+				new SubtreeReader(prt, notifier).readSubtree(primaryNodes.get(prt), subdir);
 			}
 		}
 
-		GameInformation gameInfo = new GameInfoFormat().read(sourcePath, null, notifier);
-		new GameInfoFormat().addResToGmFile(gameInfo, gmf, root);
-		GameSettings gameSettings = new GameSettingsFormat().read(sourcePath, null, notifier);
-		new GameSettingsFormat().addResToGmFile(gameSettings, gmf, root);
-		List<String> extensions = new ExtensionsFormat().read(sourcePath, null, notifier);
-		new ExtensionsFormat().addResToGmFile(extensions, gmf, root);
+		GameInfoFormat gameInfoFormat = new GameInfoFormat();
+		GameInformation gameInfo = gameInfoFormat.read(sourcePath, null, notifier);
+		gameInfoFormat.addResToTree(gameInfo, root);
+		gameInfoFormat.addAllResourcesToGmFile(Collections.singletonList(gameInfo), gmf);
+
+		GameSettingsFormat gameSettingsFormat = new GameSettingsFormat();
+		GameSettings gameSettings = gameSettingsFormat.read(sourcePath, null, notifier);
+		gameSettingsFormat.addResToTree(gameSettings, root);
+		gameSettingsFormat.addAllResourcesToGmFile(Collections.singletonList(gameSettings), gmf);
+
+		ExtensionsFormat extensionsFormat = new ExtensionsFormat();
+		List<String> extensions = extensionsFormat.read(sourcePath, null, notifier);
+		extensionsFormat.addResToTree(extensions, root);
+		extensionsFormat.addAllResourcesToGmFile(Collections.singletonList(extensions), gmf);
+
+		for (PrimaryResourceType prt : PrimaryResourceType.values()) {
+			addAllResourcesToGmFile(prt.format, resources.get(prt), gmf);
+		}
 
 		OrderPreservingDupeRemoval.perform(new TileAccessor(gmf));
 		OrderPreservingDupeRemoval.perform(new InstanceAccessor(gmf));
@@ -67,13 +90,17 @@ public class ResourceReader {
 		notifier.createReferences(gmf);
 	}
 
-	private static class SubtreeReader {
-		private final GmFile gmFile;
+	@SuppressWarnings("unchecked")
+	private <T extends Resource<T, ?>> void addAllResourcesToGmFile(ResourceFormat<T> format, List<?> resources,
+			GmFile gmf) {
+		format.addAllResourcesToGmFile((List<T>) resources, gmf);
+	}
+
+	private class SubtreeReader {
 		private final PrimaryResourceType prt;
 		private final DeferredReferenceCreatorNotifier notifier;
 
-		public SubtreeReader(GmFile gmf, PrimaryResourceType type, DeferredReferenceCreatorNotifier notifier) {
-			this.gmFile = gmf;
+		public SubtreeReader(PrimaryResourceType type, DeferredReferenceCreatorNotifier notifier) {
 			this.prt = type;
 			this.notifier = notifier;
 		}
@@ -96,14 +123,21 @@ public class ResourceReader {
 					}
 					readSubtree(child, subdir);
 				} else {
-					readResource(dir, rte.name, node, prt.format);
+					readResource(dir, rte.name, node, prt);
 				}
 			}
 		}
 
-		private <T> void readResource(File dir, String name, ResNode node, FileTreeFormat<T> format) throws IOException {
+		private void readResource(File dir, String name, ResNode node, PrimaryResourceType prt) throws IOException {
+			Resource<?, ?> resource = readResource(dir, name, node, prt.format);
+			resources.get(prt).add(resource);
+		}
+
+		private <T extends Resource<T, ?>> T readResource(File dir, String name, ResNode node, ResourceFormat<T> format)
+				throws IOException {
 			T res = format.read(dir, name, notifier);
-			format.addResToGmFile(res, gmFile, node);
+			format.addResToTree(res, node);
+			return res;
 		}
 
 		/**
@@ -121,7 +155,7 @@ public class ResourceReader {
 		 * @return
 		 * @throws IOException
 		 */
-		private static List<ResourceTreeEntry> readResourceList(File subdir) throws IOException {
+		private List<ResourceTreeEntry> readResourceList(File subdir) throws IOException {
 			File listFile = new File(subdir, "_resources.list.xml");
 			if (!listFile.isFile()) {
 				System.err.print("Directory " + subdir + " doesn't contain a resource list file. ");
@@ -155,7 +189,7 @@ public class ResourceReader {
 			return resources;
 		}
 
-		private static boolean resourcesContainFile(List<ResourceTreeEntry> resources, File resFile) {
+		private boolean resourcesContainFile(List<ResourceTreeEntry> resources, File resFile) {
 			String resName = getResourceName(resFile);
 			Type resType = resFile.isDirectory() ? Type.GROUP : Type.RESOURCE;
 			for (ResourceTreeEntry rte : resources) {
@@ -166,7 +200,7 @@ public class ResourceReader {
 			return false;
 		}
 
-		private static String getResourceName(File resFile) {
+		private String getResourceName(File resFile) {
 			String name = resFile.getName();
 			String lowName = name.toLowerCase();
 			if (resFile.isFile() && (lowName.endsWith(".xml") || lowName.endsWith(".gml"))) {

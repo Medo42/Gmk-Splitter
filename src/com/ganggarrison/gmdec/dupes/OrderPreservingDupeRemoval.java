@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010 Medo <smaxein@googlemail.com>
+ * 
+ * This file is part of GmkSplitter.
+ * GmkSplitter is free software and comes with ABSOLUTELY NO WARRANTY.
+ * See LICENSE for details.
+ */
 package com.ganggarrison.gmdec.dupes;
 
 import java.util.ArrayList;
@@ -48,7 +55,7 @@ public class OrderPreservingDupeRemoval {
 		if (changed > 0) {
 			System.err.println(changed + " duplicate " + accessor.getItemName() + " IDs have been changed.");
 		}
-		if (invalidIdItems.size() > 0) {
+		if (invalidIdItems.size() > 0 && accessor.informAboutNewIds()) {
 			System.err.println(invalidIdItems.size() + " new " + accessor.getItemName() + " IDs have been assigned.");
 		}
 	}

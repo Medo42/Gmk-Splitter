@@ -27,12 +27,12 @@ public class GmkSplitter {
 	private static final String CONSTANTS_FILENAME = "Constants.xml";
 
 	public enum IdPreservation {
-		NONE, OBJECTS_INSTANCES, ALL
+		NONE, OBJECTS, ALL
 	};
 
 	public static boolean convertLineEndings = true;
 	public static boolean omitDisabledFields = true;
-	public static IdPreservation preserveIds = IdPreservation.OBJECTS_INSTANCES;
+	public static IdPreservation preserveIds = IdPreservation.OBJECTS;
 	
 	public static void main(String[] args) throws IOException {
 		if (args.length != 2) {
@@ -100,7 +100,7 @@ public class GmkSplitter {
 		gmf.filename = destinationGmk.getAbsolutePath();
 		gmf.fileVersion = 800;
 		ResNode root = new ResNode("Root", (byte) 0, null, null);
-		ResourceReader.readTree(root, gmf, sourcePath);
+		new ResourceReader().readTree(root, gmf, sourcePath);
 
 		readConstants(gmf, sourcePath);
 

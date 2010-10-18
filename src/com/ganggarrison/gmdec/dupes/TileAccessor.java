@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010 Medo <smaxein@googlemail.com>
+ * 
+ * This file is part of GmkSplitter.
+ * GmkSplitter is free software and comes with ABSOLUTELY NO WARRANTY.
+ * See LICENSE for details.
+ */
 package com.ganggarrison.gmdec.dupes;
 
 import java.util.ArrayList;
@@ -7,6 +14,9 @@ import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Room;
 import org.lateralgm.resources.sub.Tile;
 import org.lateralgm.resources.sub.Tile.PTile;
+
+import com.ganggarrison.gmdec.GmkSplitter;
+import com.ganggarrison.gmdec.GmkSplitter.IdPreservation;
 
 public class TileAccessor implements ItemAccessor<Tile> {
 	private final GmFile gmFile;
@@ -54,5 +64,10 @@ public class TileAccessor implements ItemAccessor<Tile> {
 	@Override
 	public String getItemName() {
 		return "Tile";
+	}
+
+	@Override
+	public boolean informAboutNewIds() {
+		return GmkSplitter.preserveIds == IdPreservation.ALL;
 	}
 }
