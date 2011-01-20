@@ -158,7 +158,7 @@ public class ResourceReader {
 		private List<ResourceTreeEntry> readResourceList(File subdir) throws IOException {
 			File listFile = new File(subdir, "_resources.list.xml");
 			if (!listFile.isFile()) {
-				System.err.print("Directory " + subdir + " doesn't contain a resource list file. ");
+				System.err.print("WARNING: Directory " + subdir + " doesn't contain a resource list file. ");
 				System.err.println("No resources from this directory or its subdirectories will be processed.");
 				return Collections.emptyList();
 			}
@@ -182,7 +182,8 @@ public class ResourceReader {
 
 			for (File resFile : resFiles) {
 				if (!resourcesContainFile(resources, resFile)) {
-					System.err.println("Potential resource/group not in list file and won't be processed: " + resFile);
+					System.err.println("WARNING: Potential resource/group not in list file and won't be included: "
+							+ resFile);
 				}
 			}
 

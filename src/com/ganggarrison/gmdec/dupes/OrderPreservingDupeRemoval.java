@@ -53,10 +53,11 @@ public class OrderPreservingDupeRemoval {
 		accessor.setMaxId(nextFreeItemId - 1);
 
 		if (changed > 0) {
-			System.err.println(changed + " duplicate " + accessor.getItemName() + " IDs have been changed.");
+			System.err.println("INFO: " + changed + " duplicate " + accessor.getItemName() + " IDs have been changed.");
 		}
 		if (invalidIdItems.size() > 0 && accessor.informAboutNewIds()) {
-			System.err.println(invalidIdItems.size() + " new " + accessor.getItemName() + " IDs have been assigned.");
+			System.err.println("INFO: " + invalidIdItems.size() + " new " + accessor.getItemName()
+					+ " IDs have been assigned.");
 		}
 	}
 }
