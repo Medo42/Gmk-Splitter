@@ -36,9 +36,7 @@ public class GmkSplitter {
 	
 	public static void main(String[] args) throws IOException {
 		if (args.length != 2) {
-			System.out.println("Usage: java -jar GmkSplit.jar <source> <destination>");
-			System.out.println("One of <source> or <destination> must be the name of a .gmk-file and end with '.gmk'.");
-			System.out.println("The destination must not already exist. This tool won't overwrite.");
+			printUsage();
 			return;
 		}
 
@@ -70,7 +68,15 @@ public class GmkSplitter {
 			}
 
 			compose(dir, gmkFile);
+		} else {
+			printUsage();
 		}
+	}
+
+	private static void printUsage() {
+		System.out.println("Usage: java -jar GmkSplit.jar <source> <destination>");
+		System.out.println("One of <source> or <destination> must be the name of a .gmk-file and end with '.gmk'.");
+		System.out.println("The destination must not already exist. This tool won't overwrite.");
 	}
 
 	private static boolean isGmkFile(String arg) {
