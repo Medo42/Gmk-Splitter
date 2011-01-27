@@ -1,5 +1,6 @@
 package com.ganggarrison.gmdec.files;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import org.lateralgm.file.ResourceList;
 import org.lateralgm.resources.Resource;
 import org.lateralgm.resources.Resource.Kind;
 
+import com.ganggarrison.gmdec.ResourceTreeEntry;
+import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
 import com.ganggarrison.gmdec.dupes.OrderPreservingDupeRemoval;
 import com.ganggarrison.gmdec.dupes.ResourceAccessor;
 
@@ -42,10 +45,15 @@ public abstract class ResourceFormat<T extends Resource<T, ?>> extends FileTreeF
 		}
 	}
 
-	private void checkDuplicateNames(List<T> resources, Kind kind) {
+	@Override
+	public ResourceTreeEntry createResourceTreeEntry(T resource) {
+		return new ResourceTreeEntry(resource.getName(), baseFilename(resource), Type.RESOURCE);
+	};
+
+	public static void checkDuplicateNames(Collection<? extends Resource<?, ?>> resources, Kind kind) {
 		HashSet<String> names = new HashSet<String>();
 		HashSet<String> lcNames = new HashSet<String>();
-		for(T resource : resources) {
+		for (Resource<?, ?> resource : resources) {
 			String name = resource.getName();
 			String lcName = name.toLowerCase();
 			if (names.contains(name)) {

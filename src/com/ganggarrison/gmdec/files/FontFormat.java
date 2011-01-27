@@ -14,13 +14,14 @@ import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Font;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
 import com.ganggarrison.gmdec.xml.FontXmlFormat;
 
 public class FontFormat extends ResourceFormat<Font> {
 	@Override
-	public Font read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn) throws IOException {
-		Font font = new FontXmlFormat().read(getXmlFile(path, resourceName), drcn);
-		font.setName(resourceName);
+	public Font read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn) throws IOException {
+		Font font = new FontXmlFormat().read(getXmlFile(path, entry), drcn);
+		font.setName(entry.name);
 		return font;
 	}
 

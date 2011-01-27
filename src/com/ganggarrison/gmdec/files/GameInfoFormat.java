@@ -18,13 +18,15 @@ import org.lateralgm.resources.Resource;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
+import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
 import com.ganggarrison.gmdec.xml.GameInfoXmlFormat;
 
 public class GameInfoFormat extends FileTreeFormat<GameInformation> {
 	private static final String filename = "Game Information";
 
 	@Override
-	public GameInformation read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn)
+	public GameInformation read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn)
 			throws IOException {
 		File xmlFile = new File(path, filename + ".xml");
 		File textFile = new File(path, filename + ".txt");
@@ -36,6 +38,11 @@ public class GameInfoFormat extends FileTreeFormat<GameInformation> {
 	@Override
 	public void addResToTree(GameInformation resource, ResNode parent) {
 		parent.addChild("Game Information", ResNode.STATUS_SECONDARY, Resource.Kind.GAMEINFO);
+	}
+
+	@Override
+	public ResourceTreeEntry createResourceTreeEntry(GameInformation resource) {
+		return new ResourceTreeEntry(filename, filename, Type.RESOURCE);
 	}
 
 	@Override

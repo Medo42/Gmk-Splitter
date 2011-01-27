@@ -111,31 +111,28 @@ public class ResourceReader {
 			for (ResourceTreeEntry rte : resources) {
 				if (rte.type == Type.GROUP) {
 					String childName = rte.name;
-					File subdir;
-					if (FileTools.isGoodFilename(childName)) {
-						subdir = new File(dir, childName);
-					} else {
-						throw new IOException("Bad resource group name: " + childName);
-					}
+					File subdir = new File(dir, rte.getFilename());
 					ResNode child = node.addChild(childName, ResNode.STATUS_GROUP, node.kind);
 					if (!subdir.isDirectory()) {
-						throw new IOException("Resource group directory: " + subdir + " not found!");
+						throw new IOException("Resource group directory: " + rte.getFilename() + " not found!");
 					}
 					readSubtree(child, subdir);
 				} else {
-					readResource(dir, rte.name, node, prt);
+					readResource(dir, rte, node, prt);
 				}
 			}
 		}
 
-		private void readResource(File dir, String name, ResNode node, PrimaryResourceType prt) throws IOException {
-			Resource<?, ?> resource = readResource(dir, name, node, prt.format);
+		private void readResource(File dir, ResourceTreeEntry entry, ResNode node, PrimaryResourceType prt)
+				throws IOException {
+			Resource<?, ?> resource = readResource(dir, entry, node, prt.format);
 			resources.get(prt).add(resource);
 		}
 
-		private <T extends Resource<T, ?>> T readResource(File dir, String name, ResNode node, ResourceFormat<T> format)
+		private <T extends Resource<T, ?>> T readResource(File dir, ResourceTreeEntry entry, ResNode node,
+				ResourceFormat<T> format)
 				throws IOException {
-			T res = format.read(dir, name, notifier);
+			T res = format.read(dir, entry, notifier);
 			format.addResToTree(res, node);
 			return res;
 		}
@@ -182,7 +179,7 @@ public class ResourceReader {
 
 			for (File resFile : resFiles) {
 				if (!resourcesContainFile(resources, resFile)) {
-					System.err.println("WARNING: Potential resource/group not in list file and won't be included: "
+					System.err.println("Warning: Potential resource/group not in list file and won't be included: "
 							+ resFile);
 				}
 			}
@@ -194,7 +191,7 @@ public class ResourceReader {
 			String resName = getResourceName(resFile);
 			Type resType = resFile.isDirectory() ? Type.GROUP : Type.RESOURCE;
 			for (ResourceTreeEntry rte : resources) {
-				if (rte.name.equals(resName) && rte.type == resType) {
+				if (rte.getFilename().equals(resName) && rte.type == resType) {
 					return true;
 				}
 			}

@@ -21,6 +21,11 @@ public class FileTools {
 	}
 
 	public static void writeFile(File file, byte[] content) throws IOException {
+		// Never overwrite
+		if (file.exists()) {
+			throw new IOException("File " + file + " already exists.");
+		}
+
 		FileOutputStream fos = null;
 		DataOutputStream dos = null;
 

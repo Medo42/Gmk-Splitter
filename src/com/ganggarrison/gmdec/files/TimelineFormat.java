@@ -14,13 +14,14 @@ import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Timeline;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
 import com.ganggarrison.gmdec.xml.TimelineXmlFormat;
 
 public class TimelineFormat extends ResourceFormat<Timeline> {
 	@Override
-	public Timeline read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn) throws IOException {
-		Timeline timeline = new TimelineXmlFormat().read(getXmlFile(path, resourceName), drcn);
-		timeline.setName(resourceName);
+	public Timeline read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn) throws IOException {
+		Timeline timeline = new TimelineXmlFormat().read(getXmlFile(path, entry), drcn);
+		timeline.setName(entry.name);
 		return timeline;
 	}
 

@@ -17,16 +17,17 @@ import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Background;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
 import com.ganggarrison.gmdec.xml.BackgroundXmlFormat;
 
 public class BackgroundFormat extends ResourceFormat<Background> {
 	@Override
-	public Background read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn)
+	public Background read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn)
 			throws IOException {
-		File imageFile = new File(path, defaultFilestring(resourceName) + ".png");
+		File imageFile = new File(path, baseFilename(entry) + ".png");
 		Background background = new BackgroundXmlFormat()
-				.read(getXmlFile(path, resourceName), drcn);
-		background.setName(resourceName);
+				.read(getXmlFile(path, entry), drcn);
+		background.setName(entry.name);
 
 		if (imageFile.isFile()) {
 			BufferedImage bg = ImageIO.read(imageFile);
@@ -41,8 +42,7 @@ public class BackgroundFormat extends ResourceFormat<Background> {
 
 		BufferedImage image = background.getBackgroundImage();
 		if (image != null) {
-			ImageIO.write(image, "PNG", new File(path, defaultFilestring(background) + ".png"));
+			ImageIO.write(image, "PNG", new File(path, baseFilename(background) + ".png"));
 		}
 	}
-
 }

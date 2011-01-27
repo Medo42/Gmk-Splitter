@@ -18,16 +18,17 @@ import org.lateralgm.resources.sub.MainEvent;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.EventNamer;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
 import com.ganggarrison.gmdec.xml.EventXmlFormat;
 import com.ganggarrison.gmdec.xml.GmObjectXmlFormat;
 
 public class ObjectFormat extends ResourceFormat<GmObject> {
 	@Override
-	public GmObject read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn) throws IOException {
-		GmObject gmObject = new GmObjectXmlFormat().read(getXmlFile(path, resourceName), drcn);
-		gmObject.setName(resourceName);
+	public GmObject read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn) throws IOException {
+		GmObject gmObject = new GmObjectXmlFormat().read(getXmlFile(path, entry), drcn);
+		gmObject.setName(entry.name);
 
-		File subdir = new File(path, defaultFilestring(resourceName) + ".events");
+		File subdir = new File(path, baseFilename(entry) + ".events");
 		if (subdir.isDirectory()) {
 			File[] xmlFiles = subdir.listFiles(new FileFilter() {
 				@Override
@@ -53,7 +54,7 @@ public class ObjectFormat extends ResourceFormat<GmObject> {
 	public void write(File path, GmObject gmObject, GmFile gmf) throws IOException {
 		new GmObjectXmlFormat().write(gmObject, getXmlFile(path, gmObject));
 
-		File subdir = new File(path, defaultFilestring(gmObject) + ".events");
+		File subdir = new File(path, baseFilename(gmObject) + ".events");
 
 		boolean subdirCreated = false;
 		for (MainEvent me : gmObject.mainEvents) {

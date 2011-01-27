@@ -14,13 +14,14 @@ import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Room;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
 import com.ganggarrison.gmdec.xml.RoomXmlFormat;
 
 public class RoomFormat extends ResourceFormat<Room> {
 	@Override
-	public Room read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn) throws IOException {
-		Room room = new RoomXmlFormat().read(getXmlFile(path, resourceName), drcn);
-		room.setName(resourceName);
+	public Room read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn) throws IOException {
+		Room room = new RoomXmlFormat().read(getXmlFile(path, entry), drcn);
+		room.setName(entry.name);
 		return room;
 	}
 
@@ -28,5 +29,4 @@ public class RoomFormat extends ResourceFormat<Room> {
 	public void write(File path, Room room, GmFile gmf) throws IOException {
 		new RoomXmlFormat().write(room, getXmlFile(path, room));
 	}
-
 }

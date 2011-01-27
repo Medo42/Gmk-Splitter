@@ -16,13 +16,16 @@ import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Resource;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
+import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
 import com.ganggarrison.gmdec.xml.ExtensionsXmlFormat;
 
 public class ExtensionsFormat extends FileTreeFormat<List<String>> {
-	private static String filename = "Extension Packages.xml";
+	private static String baseFilename = "Extension Packages";
+	private static String filename = baseFilename + ".xml";
 
 	@Override
-	public List<String> read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn)
+	public List<String> read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn)
 			throws IOException {
 		return new ExtensionsXmlFormat().read(new File(path, filename), drcn);
 	}
@@ -30,6 +33,11 @@ public class ExtensionsFormat extends FileTreeFormat<List<String>> {
 	@Override
 	public void addResToTree(List<String> resource, ResNode parent) {
 		parent.addChild("Extension Packages", ResNode.STATUS_SECONDARY, Resource.Kind.EXTENSIONS);
+	}
+
+	@Override
+	public ResourceTreeEntry createResourceTreeEntry(List<String> resource) {
+		return new ResourceTreeEntry(baseFilename, baseFilename, Type.RESOURCE);
 	}
 
 	@Override

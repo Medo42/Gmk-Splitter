@@ -17,6 +17,7 @@ import org.lateralgm.resources.Resource;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
 
 public abstract class FileTreeFormat<T> {
 	public abstract void write(File path, T resource, GmFile gmf) throws IOException;
@@ -38,25 +39,32 @@ public abstract class FileTreeFormat<T> {
 	 */
 	public abstract void addAllResourcesToGmFile(List<T> resources, GmFile gmf);
 
-	public abstract T read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn)
+	public abstract T read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn)
 			throws IOException;
 
-	protected String defaultFilestring(Resource<?, ?> resource) throws IOException {
-		return defaultFilestring(resource.getName());
+	public abstract ResourceTreeEntry createResourceTreeEntry(T resource);
+
+	protected String baseFilename(Resource<?, ?> resource) {
+		return baseFilename(resource.getName());
 	}
 
-	protected String defaultFilestring(String name) throws IOException {
-		if (FileTools.isGoodFilename(name)) {
-			return name;
-		}
-		throw new IOException("Ressource name \"" + name + "\" can't be used as a filename, aborting.");
+	protected String baseFilename(String resourceName) {
+		return FileTools.replaceBadChars(resourceName);
+	}
+
+	protected String baseFilename(ResourceTreeEntry entry) {
+		return entry.getFilename();
 	}
 
 	protected File getXmlFile(File path, Resource<?, ?> resource) throws IOException {
-		return new File(path, defaultFilestring(resource) + ".xml");
+		return new File(path, baseFilename(resource) + ".xml");
 	}
 
 	protected File getXmlFile(File path, String resourceName) throws IOException {
-		return new File(path, defaultFilestring(resourceName) + ".xml");
+		return new File(path, baseFilename(resourceName) + ".xml");
+	}
+
+	protected File getXmlFile(File path, ResourceTreeEntry entry) throws IOException {
+		return new File(path, baseFilename(entry) + ".xml");
 	}
 }

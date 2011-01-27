@@ -19,14 +19,15 @@ import org.lateralgm.resources.Script.PScript;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
 import com.ganggarrison.gmdec.GmkSplitter;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
 import com.ganggarrison.gmdec.GmkSplitter.IdPreservation;
 
 public class ScriptFormat extends ResourceFormat<Script> {
 	@Override
-	public Script read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn) throws IOException {
-		File scriptFile = new File(path, defaultFilestring(resourceName) + ".gml");
+	public Script read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn) throws IOException {
+		File scriptFile = new File(path, baseFilename(entry) + ".gml");
 		Script script = new Script();
-		script.setName(resourceName);
+		script.setName(entry.name);
 
 		StringBuilder code = new StringBuilder(FileTools.readFileAsString(scriptFile));
 
@@ -45,7 +46,7 @@ public class ScriptFormat extends ResourceFormat<Script> {
 
 	@Override
 	public void write(File path, Script script, GmFile gmf) throws IOException {
-		File scriptFile = new File(path, defaultFilestring(script) + ".gml");
+		File scriptFile = new File(path, baseFilename(script) + ".gml");
 		StringBuilder code = new StringBuilder(script.getCode());
 		if (GmkSplitter.preserveIds == IdPreservation.ALL) {
 			code.insert(0, "/* !scriptId=" + script.getId() + " */\r\n");

@@ -24,6 +24,9 @@ public class ResourceListXmlFormat extends XmlFormat<List<ResourceTreeEntry>> {
 		for (ResourceTreeEntry rte : resources) {
 			writer.startElement("resource");
 			writer.putAttribute("name", rte.name);
+			if (!rte.name.equals(rte.getFilename())) {
+				writer.putAttribute("filename", rte.getFilename());
+			}
 			writer.putAttribute("type", rte.type);
 			writer.endElement();
 		}
@@ -42,6 +45,9 @@ public class ResourceListXmlFormat extends XmlFormat<List<ResourceTreeEntry>> {
 			reader.enterElement("resource");
 			ResourceTreeEntry entry = new ResourceTreeEntry();
 			entry.name = reader.getStringAttribute("name");
+			if (reader.hasAttribute("filename")) {
+				entry.filename = reader.getStringAttribute("filename");
+			}
 			entry.type = Type.valueOf(reader.getStringAttribute("type"));
 			resources.add(entry);
 			reader.leaveElement();

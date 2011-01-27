@@ -14,13 +14,14 @@ import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Path;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
 import com.ganggarrison.gmdec.xml.PathXmlFormat;
 
 public class PathFormat extends ResourceFormat<Path> {
 	@Override
-	public Path read(File filePath, String resourceName, DeferredReferenceCreatorNotifier drcn) throws IOException {
-		Path path = new PathXmlFormat().read(getXmlFile(filePath, resourceName), drcn);
-		path.setName(resourceName);
+	public Path read(File filePath, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn) throws IOException {
+		Path path = new PathXmlFormat().read(getXmlFile(filePath, entry), drcn);
+		path.setName(entry.name);
 		return path;
 	}
 

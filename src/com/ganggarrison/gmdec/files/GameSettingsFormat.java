@@ -22,17 +22,20 @@ import org.lateralgm.resources.Resource;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
+import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
 import com.ganggarrison.gmdec.xml.GameSettingsXmlFormat;
 
 public class GameSettingsFormat extends FileTreeFormat<GameSettings> {
-	private static final String xmlFilename = "Global Game Settings.xml";
+	private static final String baseFilename = "Global Game Settings";
+	private static final String xmlFilename = baseFilename + ".xml";
 	private static final String frontLoadBarFilename = "loadbar front.png";
 	private static final String backLoadBarFilename = "loadbar background.png";
 	private static final String loadingImageFilename = "loading image.png";
 	private static final String iconFilename = "game icon.ico";
 
 	@Override
-	public GameSettings read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn)
+	public GameSettings read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn)
 			throws IOException {
 		GameSettings settings = new GameSettingsXmlFormat().read(new File(path, xmlFilename), drcn);
 
@@ -61,6 +64,11 @@ public class GameSettingsFormat extends FileTreeFormat<GameSettings> {
 	@Override
 	public void addResToTree(GameSettings resource, ResNode parent) {
 		parent.addChild("Global Game Settings", ResNode.STATUS_SECONDARY, Resource.Kind.GAMESETTINGS);
+	}
+
+	@Override
+	public ResourceTreeEntry createResourceTreeEntry(GameSettings resource) {
+		return new ResourceTreeEntry(baseFilename, baseFilename, Type.RESOURCE);
 	}
 
 	@Override

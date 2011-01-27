@@ -18,15 +18,16 @@ import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.Sprite;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.ResourceTreeEntry;
 import com.ganggarrison.gmdec.xml.SpriteXmlFormat;
 
 public class SpriteFormat extends ResourceFormat<Sprite> {
 	@Override
-	public Sprite read(File path, String resourceName, DeferredReferenceCreatorNotifier drcn) throws IOException {
-		Sprite sprite = new SpriteXmlFormat().read(getXmlFile(path, resourceName), drcn);
-		sprite.setName(resourceName);
+	public Sprite read(File path, ResourceTreeEntry entry, DeferredReferenceCreatorNotifier drcn) throws IOException {
+		Sprite sprite = new SpriteXmlFormat().read(getXmlFile(path, entry), drcn);
+		sprite.setName(entry.name);
 
-		File imagesDir = new File(path, defaultFilestring(resourceName) + ".images");
+		File imagesDir = new File(path, baseFilename(entry) + ".images");
 		if (imagesDir.isDirectory()) {
 			readImages(sprite, imagesDir);
 		}
@@ -60,12 +61,11 @@ public class SpriteFormat extends ResourceFormat<Sprite> {
 
 	@Override
 	public void write(File path, Sprite sprite, GmFile gmf) throws IOException {
-		File xmlFile = new File(path, defaultFilestring(sprite) + ".xml");
-		new SpriteXmlFormat().write(sprite, xmlFile);
+		new SpriteXmlFormat().write(sprite, getXmlFile(path, sprite));
 
 		File subPath = null;
 		if (sprite.subImages.size() > 0) {
-			subPath = new File(path, defaultFilestring(sprite) + ".images");
+			subPath = new File(path, baseFilename(sprite) + ".images");
 			if (!subPath.mkdirs()) {
 				throw new IOException("Cannot create path " + subPath + ", it already exists.");
 			}

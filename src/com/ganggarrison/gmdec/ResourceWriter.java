@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
@@ -24,6 +23,7 @@ import com.ganggarrison.gmdec.files.ExtensionsFormat;
 import com.ganggarrison.gmdec.files.GameInfoFormat;
 import com.ganggarrison.gmdec.files.GameSettingsFormat;
 import com.ganggarrison.gmdec.files.FileTreeFormat;
+import com.ganggarrison.gmdec.files.ResourceFormat;
 import com.ganggarrison.gmdec.xml.ResourceListXmlFormat;
 
 public class ResourceWriter {
@@ -31,13 +31,7 @@ public class ResourceWriter {
 		for (Kind resKind : Kind.values()) {
 			ResourceList<?> list = gmf.getList(resKind);
 			if (list != null) {
-				HashSet<String> names = new HashSet<String>();
-				for (Resource<?, ?> res : list) {
-					if (names.contains(res.getName().toLowerCase())) {
-						throw new IOException("Duplicate " + resKind + " name " + res.getName());
-					}
-					names.add(res.getName().toLowerCase());
-				}
+				ResourceFormat.checkDuplicateNames(list, resKind);
 			}
 		}
 		if (startPath.exists()) {
@@ -91,22 +85,18 @@ public class ResourceWriter {
 		ArrayList<ResourceTreeEntry> groupResList = new ArrayList<ResourceTreeEntry>();
 		while (children.hasMoreElements()) {
 			ResNode child = children.nextElement();
-			String childName = (String) child.getUserObject();
 			if (child.status != ResNode.STATUS_SECONDARY) {
-				File subPath;
-				if (FileTools.isGoodFilename(childName)) {
-					subPath = new File(path, childName);
-				} else {
-					throw new IOException("Bad resource group name: " + childName);
-				}
+				String childName = (String) child.getUserObject();
+				String filename = FileTools.replaceBadChars(childName);
+				File subPath = new File(path, filename);
 				writeTreeRecursive(child, subPath, type, gmf);
-				groupResList.add(new ResourceTreeEntry(childName, Type.GROUP));
+				groupResList.add(new ResourceTreeEntry(childName, filename, Type.GROUP));
 			} else {
 				if (child.getRes() != null) {
 					FileTreeFormat format = type.format;
 					Resource<?, ?> resource = child.getRes().get();
 					format.write(path, resource, gmf);
-					groupResList.add(new ResourceTreeEntry(resource.getName(), Type.RESOURCE));
+					groupResList.add(format.createResourceTreeEntry(resource));
 				} else {
 					System.err.println("Ressource without reference in tree: " + child.getUserObject());
 				}
