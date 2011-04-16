@@ -180,6 +180,16 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			writer.putElement("product", settings.product);
 			writer.putElement("copyright", settings.copyright);
 			writer.putElement("description", settings.description);
+
+			StringBuilder directPlayGuid = new StringBuilder();
+			for (int i = 0; i < 16; i++) {
+				String hex = Integer.toHexString(settings.directPlayGuid[i] & 0xff);
+				if (hex.length() == 1) {
+					directPlayGuid.append('0');
+				}
+				directPlayGuid.append(hex);
+			}
+			writer.putElement("directPlayGuid", directPlayGuid);
 		}
 		writer.endElement();
 		writer.startElement("system");
@@ -276,6 +286,14 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			settings.product = reader.getStringElement("product");
 			settings.copyright = reader.getStringElement("copyright");
 			settings.description = reader.getStringElement("description");
+
+			if (reader.hasNextElement()) {
+				String directPlayGuid = reader.getStringElement("directPlayGuid");
+				for (int i = 0; i < 16; i++) {
+					String hexByte = directPlayGuid.substring(i * 2, i * 2 + 2);
+					settings.directPlayGuid[i] = (byte) Integer.parseInt(hexByte, 16);
+				}
+			}
 		}
 		reader.leaveElement();
 		reader.enterElement("system");

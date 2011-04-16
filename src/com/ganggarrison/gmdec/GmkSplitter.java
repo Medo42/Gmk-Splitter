@@ -33,7 +33,7 @@ public class GmkSplitter {
 	public static boolean convertLineEndings = true;
 	public static boolean omitDisabledFields = true;
 	public static IdPreservation preserveIds = IdPreservation.OBJECTS;
-	
+
 	public static void main(String[] args) throws IOException {
 		if (args.length != 2) {
 			printUsage();
@@ -80,7 +80,7 @@ public class GmkSplitter {
 	}
 
 	private static boolean isGmkFile(String arg) {
-		return arg.toLowerCase().endsWith(".gmk");
+		return arg.toLowerCase().endsWith(".gmk") || arg.toLowerCase().endsWith(".gm81");
 	}
 
 	public static void decompose(File sourceGmk, File destinationPath) throws IOException {
@@ -88,7 +88,7 @@ public class GmkSplitter {
 		try {
 			ResNode root = new ResNode("Root", (byte) 0, null, null);
 			GmFile gmf = GmFileReader.readGmFile(sourceGmk.getAbsolutePath(), root);
-			if (gmf.fileVersion != 800) {
+			if (gmf.fileVersion != 800 && gmf.fileVersion != 810) {
 				System.err
 						.println("Warning: The source .gmk file is not of GM version 8. GMK Splitter is *not tested* with this format.");
 			}
