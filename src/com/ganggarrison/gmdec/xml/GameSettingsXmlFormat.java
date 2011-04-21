@@ -162,7 +162,9 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			writer.putElement("writeToLog", settings.writeToLog);
 			writer.putElement("abortOnError", settings.abortOnError);
 			writer.putElement("treatUninitializedAsZero", settings.treatUninitializedAs0);
-			writer.putElement("checkScriptArgumentCount", settings.errorOnArgs);
+			if (GmkSplitter.targetVersion >= 810) {
+				writer.putElement("checkScriptArgumentCount", settings.errorOnArgs);
+			}
 		}
 		writer.endElement();
 		writer.startElement("gameInfo");
@@ -271,6 +273,9 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			settings.treatUninitializedAs0 = reader.getBoolElement("treatUninitializedAsZero");
 			if (reader.hasNextElement()) {
 				settings.errorOnArgs = reader.getBoolElement("checkScriptArgumentCount");
+				if (GmkSplitter.targetVersion < 810) {
+					GmkSplitter.issueVersionWarning("GameSettings/checkScriptArgumentCount");
+				}
 			}
 		}
 		reader.leaveElement();

@@ -13,6 +13,7 @@ import org.lateralgm.resources.Font.PFont;
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
+import com.ganggarrison.gmdec.GmkSplitter;
 
 public class FontXmlFormat extends XmlFormat<Font> {
 
@@ -27,8 +28,10 @@ public class FontXmlFormat extends XmlFormat<Font> {
 			writer.putElement("rangeMin", font.get(PFont.RANGE_MIN));
 			writer.putElement("rangeMax", font.get(PFont.RANGE_MAX));
 			writer.putElement("size", font.get(PFont.SIZE));
-			writer.putElement("charset", font.get(PFont.CHARSET));
-			writer.putElement("antialias", font.get(PFont.ANTIALIAS));
+			if (GmkSplitter.targetVersion >= 810) {
+				writer.putElement("charset", font.get(PFont.CHARSET));
+				writer.putElement("antialias", font.get(PFont.ANTIALIAS));
+			}
 		}
 		writer.endElement();
 	}
@@ -47,9 +50,10 @@ public class FontXmlFormat extends XmlFormat<Font> {
 			font.put(PFont.SIZE, reader.getIntElement("size"));
 			if (reader.hasNextElement()) {
 				font.put(PFont.CHARSET, reader.getIntElement("charset"));
-			}
-			if (reader.hasNextElement()) {
 				font.put(PFont.ANTIALIAS, reader.getIntElement("antialias"));
+				if (GmkSplitter.targetVersion < 810) {
+					GmkSplitter.issueVersionWarning("Font/Charset and Antialias");
+				}
 			}
 		}
 		reader.leaveElement();

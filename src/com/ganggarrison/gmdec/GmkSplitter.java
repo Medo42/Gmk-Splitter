@@ -10,6 +10,7 @@ package com.ganggarrison.gmdec;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.lateralgm.components.impl.ResNode;
@@ -34,6 +35,7 @@ public class GmkSplitter {
 	public static boolean convertLineEndings = true;
 	public static boolean omitDisabledFields = true;
 	public static IdPreservation preserveIds = IdPreservation.OBJECTS;
+	public static int targetVersion = 800;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 2) {
@@ -75,8 +77,10 @@ public class GmkSplitter {
 	}
 
 	private static void printUsage() {
-		System.out.println("Usage: java -jar GmkSplit.jar <source> <destination>");
-		System.out.println("One of <source> or <destination> must be the name of a .gmk-file and end with '.gmk'.");
+		System.out.println("Usage: java -jar GmkSplit.jar <source> <dest>");
+		System.out.println("One of <source> or <dest> must be the name of a .gmk or .gm81 file.");
+		System.out.println("Using a .gmk file as destination will create a GM 8.0 file.");
+		System.out.println("Using a .gm81 file as destination will create a GM 8.1 file.");
 		System.out.println("The destination must not already exist. This tool won't overwrite.");
 	}
 
@@ -91,8 +95,9 @@ public class GmkSplitter {
 			GmFile gmf = GmFileReader.readGmFile(sourceGmk.getAbsolutePath(), root);
 			if (gmf.fileVersion != 800 && gmf.fileVersion != 810) {
 				System.err
-						.println("Warning: The source .gmk file is not of GM version 8. GMK Splitter is *not tested* with this format.");
+						.println("Warning: The source file is not of GM version 8 or 8.1. GMK Splitter is *not tested* with this format.");
 			}
+			targetVersion = gmf.fileVersion;
 			ResourceWriter.writeTree(root, gmf, destinationPath);
 
 			writeConstants(gmf, destinationPath);
@@ -106,7 +111,8 @@ public class GmkSplitter {
 		LibManager.autoLoad();
 		GmFile gmf = new GmFile();
 		gmf.filename = destinationGmk.getAbsolutePath();
-		gmf.fileVersion = 800;
+		gmf.fileVersion = destinationGmk.getName().toLowerCase().endsWith(".gmk") ? 800 : 810;
+		targetVersion = gmf.fileVersion;
 		ResNode root = new ResNode("Root", (byte) 0, null, null);
 		new ResourceReader().readTree(root, gmf, sourcePath);
 
@@ -143,6 +149,16 @@ public class GmkSplitter {
 		File includedFilesPath = new File(sourcePath, INCLUDED_FILES_DIR);
 		if (includedFilesPath.isDirectory()) {
 			IncludedFileFormat.read(includedFilesPath, gmf);
+		}
+	}
+
+	private static HashSet<String> issuedVersionWarnings = new HashSet<String>();
+
+	public static void issueVersionWarning(String info) {
+		if (!issuedVersionWarnings.contains(info)) {
+			System.err.println("Warning: The information \"" + info
+					+ "\" cannot be represented in the target format.");
+			issuedVersionWarnings.add(info);
 		}
 	}
 }
