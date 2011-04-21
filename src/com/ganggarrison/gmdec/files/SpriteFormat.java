@@ -47,7 +47,7 @@ public class SpriteFormat extends ResourceFormat<Sprite> {
 		do {
 			File imageFile = new File(imagesDir, "image " + index + ".png");
 			if (imageFile.isFile()) {
-				sprite.addSubImage(ImageIO.read(imageFile));
+				sprite.subImages.add(ImageIO.read(imageFile));
 			} else {
 				imageFound = false;
 			}

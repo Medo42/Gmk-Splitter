@@ -162,6 +162,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			writer.putElement("writeToLog", settings.writeToLog);
 			writer.putElement("abortOnError", settings.abortOnError);
 			writer.putElement("treatUninitializedAsZero", settings.treatUninitializedAs0);
+			writer.putElement("checkScriptArgumentCount", settings.errorOnArgs);
 		}
 		writer.endElement();
 		writer.startElement("gameInfo");
@@ -183,7 +184,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 
 			StringBuilder directPlayGuid = new StringBuilder();
 			for (int i = 0; i < 16; i++) {
-				String hex = Integer.toHexString(settings.directPlayGuid[i] & 0xff);
+				String hex = Integer.toHexString(settings.dplayGUID[i] & 0xff);
 				if (hex.length() == 1) {
 					directPlayGuid.append('0');
 				}
@@ -268,6 +269,9 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 			settings.writeToLog = reader.getBoolElement("writeToLog");
 			settings.abortOnError = reader.getBoolElement("abortOnError");
 			settings.treatUninitializedAs0 = reader.getBoolElement("treatUninitializedAsZero");
+			if (reader.hasNextElement()) {
+				settings.errorOnArgs = reader.getBoolElement("checkScriptArgumentCount");
+			}
 		}
 		reader.leaveElement();
 		reader.enterElement("gameInfo");
@@ -291,7 +295,7 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 				String directPlayGuid = reader.getStringElement("directPlayGuid");
 				for (int i = 0; i < 16; i++) {
 					String hexByte = directPlayGuid.substring(i * 2, i * 2 + 2);
-					settings.directPlayGuid[i] = (byte) Integer.parseInt(hexByte, 16);
+					settings.dplayGUID[i] = (byte) Integer.parseInt(hexByte, 16);
 				}
 			}
 		}

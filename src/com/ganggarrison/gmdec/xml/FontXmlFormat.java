@@ -27,6 +27,8 @@ public class FontXmlFormat extends XmlFormat<Font> {
 			writer.putElement("rangeMin", font.get(PFont.RANGE_MIN));
 			writer.putElement("rangeMax", font.get(PFont.RANGE_MAX));
 			writer.putElement("size", font.get(PFont.SIZE));
+			writer.putElement("charset", font.get(PFont.CHARSET));
+			writer.putElement("antialias", font.get(PFont.ANTIALIAS));
 		}
 		writer.endElement();
 	}
@@ -43,6 +45,12 @@ public class FontXmlFormat extends XmlFormat<Font> {
 			font.put(PFont.RANGE_MIN, reader.getIntElement("rangeMin"));
 			font.put(PFont.RANGE_MAX, reader.getIntElement("rangeMax"));
 			font.put(PFont.SIZE, reader.getIntElement("size"));
+			if (reader.hasNextElement()) {
+				font.put(PFont.CHARSET, reader.getIntElement("charset"));
+			}
+			if (reader.hasNextElement()) {
+				font.put(PFont.ANTIALIAS, reader.getIntElement("antialias"));
+			}
 		}
 		reader.leaveElement();
 		return font;

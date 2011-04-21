@@ -7,8 +7,6 @@
  */
 package com.ganggarrison.gmdec;
 
-import java.io.IOException;
-
 public class ResourceTreeEntry {
 	public String name;
 	public String filename;
