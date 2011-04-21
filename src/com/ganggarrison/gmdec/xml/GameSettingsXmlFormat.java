@@ -276,6 +276,12 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 				if (GmkSplitter.targetVersion < 810) {
 					GmkSplitter.issueVersionWarning("GameSettings/checkScriptArgumentCount");
 				}
+			} else {
+				/*
+				 * The default is true, but GM sets it to false when converting
+				 * from older formats, so we do that too.
+				 */
+				settings.errorOnArgs = false;
 			}
 		}
 		reader.leaveElement();
