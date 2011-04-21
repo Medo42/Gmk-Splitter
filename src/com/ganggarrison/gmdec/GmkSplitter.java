@@ -21,6 +21,7 @@ import org.lateralgm.resources.library.LibManager;
 import org.lateralgm.resources.sub.Constant;
 
 import com.ganggarrison.easyxml.XmlReader;
+import com.ganggarrison.gmdec.files.IncludedFileFormat;
 import com.ganggarrison.gmdec.xml.ConstantsXmlFormat;
 
 public class GmkSplitter {
@@ -95,6 +96,7 @@ public class GmkSplitter {
 			ResourceWriter.writeTree(root, gmf, destinationPath);
 
 			writeConstants(gmf, destinationPath);
+			writeIncludedFiles(gmf, destinationPath);
 		} catch (GmFormatException e) {
 			throw new IOException(e);
 		}
@@ -109,6 +111,7 @@ public class GmkSplitter {
 		new ResourceReader().readTree(root, gmf, sourcePath);
 
 		readConstants(gmf, sourcePath);
+		readIncludedFiles(gmf, sourcePath);
 
 		GmFileWriter.writeGmFile(gmf, root);
 	}
@@ -122,5 +125,24 @@ public class GmkSplitter {
 		File constantsFile = new File(sourcePath, CONSTANTS_FILENAME);
 		List<Constant> constants = new ConstantsXmlFormat().read(new XmlReader(constantsFile));
 		gmf.constants = new ArrayList<Constant>(constants);
+	}
+
+	private static String INCLUDED_FILES_DIR = "Included Files";
+
+	private static void writeIncludedFiles(GmFile gmf, File destinationPath) throws IOException {
+		if (!gmf.includes.isEmpty()) {
+			File includedFilesPath = new File(destinationPath, INCLUDED_FILES_DIR);
+			if (!includedFilesPath.mkdirs()) {
+				throw new IOException("Unable to create path: " + includedFilesPath);
+			}
+			IncludedFileFormat.write(includedFilesPath, gmf.includes);
+		}
+	}
+
+	private static void readIncludedFiles(GmFile gmf, File sourcePath) throws IOException {
+		File includedFilesPath = new File(sourcePath, INCLUDED_FILES_DIR);
+		if (includedFilesPath.isDirectory()) {
+			IncludedFileFormat.read(includedFilesPath, gmf);
+		}
 	}
 }
