@@ -14,7 +14,6 @@ import java.awt.Point;
 
 import org.lateralgm.resources.Background;
 import org.lateralgm.resources.GmObject;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.ResourceReference;
 import org.lateralgm.resources.Room;
 import org.lateralgm.resources.Room.PRoom;
@@ -261,7 +260,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 			properties.put(PBackgroundDef.FOREGROUND, reader.getBoolElement("isForeground"));
 			String backgroundRef = readResourceRef(reader, "backgroundImage");
 			DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PBackgroundDef>(
-					properties, PBackgroundDef.BACKGROUND, Kind.BACKGROUND, backgroundRef);
+					properties, PBackgroundDef.BACKGROUND, Background.class, backgroundRef);
 			notifier.addDeferredReferenceCreator(rc);
 			Point offset = readPoint(reader, "offset");
 			properties.put(PBackgroundDef.X, offset.x);
@@ -302,7 +301,7 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 				String objRef = reader.getTextContent();
 				if (!objRef.isEmpty()) {
 					DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PView>(
-							properties, PView.OBJECT, Kind.OBJECT, objRef);
+							properties, PView.OBJECT, GmObject.class, objRef);
 					notifier.addDeferredReferenceCreator(rc);
 				}
 				properties.put(PView.BORDER_H, reader.getIntAttribute("hBorder"));

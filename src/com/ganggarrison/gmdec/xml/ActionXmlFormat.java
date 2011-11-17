@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.GmObject;
+import org.lateralgm.resources.InstantiableResource;
 import org.lateralgm.resources.Resource;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.ResourceReference;
 import org.lateralgm.resources.library.LibAction;
 import org.lateralgm.resources.library.LibManager;
@@ -232,7 +232,7 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 		@Override
 		public void createReferences(GmFile gmf) {
 			if (name != null && !name.isEmpty()) {
-				GmObject refObj = gmf.gmObjects.get(name);
+				GmObject refObj = gmf.resMap.getList(GmObject.class).get(name);
 				if (refObj != null) {
 					action.setAppliesTo(refObj.reference);
 				} else {
@@ -243,16 +243,17 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 		}
 	}
 
-	private static class ArgumentReferenceCreator implements DeferredReferenceCreator {
+	private static class ArgumentReferenceCreator implements
+			DeferredReferenceCreator {
 		private Argument arg;
 		private String name;
-		private Kind reskind;
+		private Class reskind;
 
 		public ArgumentReferenceCreator(Argument arg) {
 			this.arg = arg;
 		}
 
-		public void setReference(String ref, Kind reskind) {
+		public void setReference(String ref, Class reskind) {
 			this.name = ref;
 			this.reskind = reskind;
 		}
@@ -260,7 +261,7 @@ public class ActionXmlFormat extends XmlFormat<Action> {
 		@Override
 		public void createReferences(GmFile gmf) {
 			if (name != null && !name.isEmpty()) {
-				Resource<?, ?> refObj = gmf.getList(reskind).get(name);
+				Resource<?, ?> refObj = gmf.resMap.getList((Class) reskind).get(name);
 				if (refObj != null) {
 					arg.setRes(refObj.reference);
 				} else {

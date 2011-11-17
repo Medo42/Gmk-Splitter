@@ -15,8 +15,11 @@ import java.util.Enumeration;
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.file.ResourceList;
+import org.lateralgm.resources.Extensions;
+import org.lateralgm.resources.GameInformation;
+import org.lateralgm.resources.GameSettings;
+import org.lateralgm.resources.InstantiableResource;
 import org.lateralgm.resources.Resource;
-import org.lateralgm.resources.Resource.Kind;
 
 import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
 import com.ganggarrison.gmdec.files.ExtensionsFormat;
@@ -28,10 +31,12 @@ import com.ganggarrison.gmdec.xml.ResourceListXmlFormat;
 
 public class ResourceWriter {
 	public static void writeTree(ResNode root, GmFile gmf, File startPath) throws IOException {
-		for (Kind resKind : Kind.values()) {
-			ResourceList<?> list = gmf.getList(resKind);
-			if (list != null) {
-				ResourceFormat.checkDuplicateNames(list, resKind);
+		for (Class<?> resKind : gmf.resMap.keySet()) {
+			if (InstantiableResource.class.isAssignableFrom(resKind)) {
+				ResourceList<?> list = gmf.resMap.getList((Class) resKind);
+				if (list != null) {
+					ResourceFormat.checkDuplicateNames(list, resKind);
+				}
 			}
 		}
 		if (startPath.exists()) {
@@ -43,17 +48,13 @@ public class ResourceWriter {
 			if (child.status == ResNode.STATUS_PRIMARY) {
 				writeChildTree(startPath, child, gmf);
 			} else if (child.status == ResNode.STATUS_SECONDARY) {
-				switch (child.kind) {
-				case GAMEINFO:
+				if (GameInformation.class.equals(child.kind)) {
 					new GameInfoFormat().write(startPath, gmf.gameInfo, gmf);
-					break;
-				case EXTENSIONS:
+				} else if (Extensions.class.equals(child.kind)) {
 					new ExtensionsFormat().write(startPath, gmf.packages, gmf);
-					break;
-				case GAMESETTINGS:
+				} else if (GameSettings.class.equals(child.kind)) {
 					new GameSettingsFormat().write(startPath, gmf.gameSettings, gmf);
-					break;
-				default:
+				} else {
 					throw new IOException("Unexpected secondary resource kind " + child.kind
 							+ " in first level of the tree.");
 				}

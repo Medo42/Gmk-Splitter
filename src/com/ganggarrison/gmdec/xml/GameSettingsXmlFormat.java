@@ -7,101 +7,69 @@
  */
 package com.ganggarrison.gmdec.xml;
 
+import java.awt.Color;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.lateralgm.resources.GameSettings;
+import org.lateralgm.resources.GameSettings.ColorDepth;
+import org.lateralgm.resources.GameSettings.Frequency;
+import org.lateralgm.resources.GameSettings.IncludeFolder;
+import org.lateralgm.resources.GameSettings.PGameSettings;
+import org.lateralgm.resources.GameSettings.Priority;
+import org.lateralgm.resources.GameSettings.ProgressBar;
+import org.lateralgm.resources.GameSettings.Resolution;
 
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.GmkSplitter;
-import com.ganggarrison.gmdec.LgmConst;
 import com.ganggarrison.gmdec.Tools;
 
 public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
-	public enum ColorDepth implements LgmConst.Provider {
-		COLOR_NOCHANGE(GameSettings.COLOR_NOCHANGE),
-		COLOR_16(GameSettings.COLOR_16),
-		COLOR_32(GameSettings.COLOR_32);
-
-		public final byte gameSettingsConst;
-
-		public byte getLgmConst() {
-			return gameSettingsConst;
-		}
-
-		private ColorDepth(byte constant) {
-			gameSettingsConst = constant;
-		}
+	public static interface MappedEnum<T extends Enum<T>> {
+		T getMapped();
 	}
 
-	public enum Resolution implements LgmConst.Provider {
-		RES_NOCHANGE(GameSettings.RES_NOCHANGE),
-		RES_320X240(GameSettings.RES_320X240),
-		RES_640X480(GameSettings.RES_640X480),
-		RES_800X600(GameSettings.RES_800X600),
-		RES_1024X768(GameSettings.RES_1024X768),
-		RES_1280X1024(GameSettings.RES_1280X1024),
-		RES_1600X1200(GameSettings.RES_1600X1200);
+	private static final EnumMap<ColorDepth, String> colorDepthStrings = new EnumMap<ColorDepth, String>(
+			GameSettings.ColorDepth.class);
+	private static final EnumMap<Resolution, String> resolutionStrings = new EnumMap<Resolution, String>(
+			Resolution.class);
+	private static final EnumMap<Frequency, String> frequencyStrings = new EnumMap<Frequency, String>(
+			Frequency.class);
+	private static final EnumMap<Priority, String> priorityStrings = new EnumMap<Priority, String>(
+			Priority.class);
+	private static final EnumMap<ProgressBar, String> progressBarStrings = new EnumMap<GameSettings.ProgressBar, String>(
+			ProgressBar.class);
 
-		public final byte gameSettingsConst;
+	static {
+		colorDepthStrings.put(ColorDepth.NO_CHANGE, "COLOR_NOCHANGE");
+		colorDepthStrings.put(ColorDepth.BIT_16, "COLOR_16");
+		colorDepthStrings.put(ColorDepth.BIT_32, "COLOR_32");
 
-		public byte getLgmConst() {
-			return gameSettingsConst;
-		}
+		resolutionStrings.put(Resolution.NO_CHANGE, "RES_NOCHANGE");
+		resolutionStrings.put(Resolution.RES_320X240, "RES_320X240");
+		resolutionStrings.put(Resolution.RES_640X480, "RES_640X480");
+		resolutionStrings.put(Resolution.RES_800X600, "RES_800X600");
+		resolutionStrings.put(Resolution.RES_1024X768, "RES_1024X768");
+		resolutionStrings.put(Resolution.RES_1280X1024, "RES_1280X1024");
+		resolutionStrings.put(Resolution.RES_1600X1200, "RES_1600X1200");
 
-		private Resolution(byte constant) {
-			gameSettingsConst = constant;
-		}
-	}
+		frequencyStrings.put(Frequency.NO_CHANGE, "FREQ_NOCHANGE");
+		frequencyStrings.put(Frequency.FREQ_60, "FREQ_60");
+		frequencyStrings.put(Frequency.FREQ_70, "FREQ_70");
+		frequencyStrings.put(Frequency.FREQ_85, "FREQ_85");
+		frequencyStrings.put(Frequency.FREQ_100, "FREQ_100");
+		frequencyStrings.put(Frequency.FREQ_120, "FREQ_120");
 
-	public enum Frequency implements LgmConst.Provider {
-		FREQ_NOCHANGE(GameSettings.FREQ_NOCHANGE),
-		FREQ_60(GameSettings.FREQ_60),
-		FREQ_70(GameSettings.FREQ_70),
-		FREQ_85(GameSettings.FREQ_85),
-		FREQ_100(GameSettings.FREQ_100),
-		FREQ_120(GameSettings.FREQ_120);
+		priorityStrings.put(Priority.NORMAL, "PRIORITY_NORMAL");
+		priorityStrings.put(Priority.HIGH, "PRIORITY_HIGH");
+		priorityStrings.put(Priority.HIGHEST, "PRIORITY_HIGHEST");
 
-		public final byte gameSettingsConst;
-
-		public byte getLgmConst() {
-			return gameSettingsConst;
-		}
-
-		private Frequency(byte constant) {
-			gameSettingsConst = constant;
-		}
-	}
-
-	public enum Priority implements LgmConst.Provider {
-		PRIORITY_NORMAL(GameSettings.PRIORITY_NORMAL),
-		PRIORITY_HIGH(GameSettings.PRIORITY_HIGH),
-		PRIORITY_HIGHEST(GameSettings.PRIORITY_HIGHEST);
-
-		public final byte gameSettingsConst;
-
-		public byte getLgmConst() {
-			return gameSettingsConst;
-		}
-
-		private Priority(byte constant) {
-			gameSettingsConst = constant;
-		}
-	}
-
-	public enum Loadbar implements LgmConst.Provider {
-		LOADBAR_NONE(GameSettings.LOADBAR_NONE),
-		LOADBAR_DEFAULT(GameSettings.LOADBAR_DEFAULT),
-		LOADBAR_CUSTOM(GameSettings.LOADBAR_CUSTOM);
-
-		public final byte gameSettingsConst;
-
-		public byte getLgmConst() {
-			return gameSettingsConst;
-		}
-
-		private Loadbar(byte constant) {
-			gameSettingsConst = constant;
-		}
+		progressBarStrings.put(ProgressBar.NONE, "LOADBAR_NONE");
+		progressBarStrings.put(ProgressBar.DEFAULT, "LOADBAR_DEFAULT");
+		progressBarStrings.put(ProgressBar.CUSTOM, "LOADBAR_CUSTOM");
 	}
 
 	@Override
@@ -109,84 +77,86 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		writer.startElement("settings");
 		writer.startElement("graphics");
 		{
-			writer.putElement("scalingPercent", settings.scaling);
-			writer.putElement("displayCursor", settings.displayCursor);
-			writer.putElement("useVsync", settings.useSynchronization);
-			writer.putElement("interpolateColors", settings.interpolate);
-			writer.putElement("colorOutsideRoom", Tools.colorToString(settings.colorOutsideRoom));
+			writer.putElement("scalingPercent", settings.get(PGameSettings.SCALING));
+			writer.putElement("displayCursor", settings.get(PGameSettings.DISPLAY_CURSOR));
+			writer.putElement("useVsync", settings.get(PGameSettings.USE_SYNCHRONIZATION));
+			writer.putElement("interpolateColors", settings.get(PGameSettings.INTERPOLATE));
+			writer.putElement("colorOutsideRoom",
+					Tools.colorToString((Color) settings.get(PGameSettings.COLOR_OUTSIDE_ROOM)));
 		}
 		writer.endElement();
 		writer.startElement("windowing");
 		{
-			writer.putElement("startFullscreen", settings.startFullscreen);
-			writer.putElement("dontDrawBorder", settings.dontDrawBorder);
-			writer.putElement("allowWindowResize", settings.allowWindowResize);
-			writer.putElement("alwaysOnTop", settings.alwaysOnTop);
-			writer.putElement("dontShowButtons", settings.dontShowButtons);
-			writer.putElement("switchVideoMode", settings.setResolution);
-			if (settings.setResolution || !GmkSplitter.omitDisabledFields) {
+			writer.putElement("startFullscreen", settings.get(PGameSettings.START_FULLSCREEN));
+			writer.putElement("dontDrawBorder", settings.get(PGameSettings.DONT_DRAW_BORDER));
+			writer.putElement("allowWindowResize", settings.get(PGameSettings.ALLOW_WINDOW_RESIZE));
+			writer.putElement("alwaysOnTop", settings.get(PGameSettings.ALWAYS_ON_TOP));
+			writer.putElement("dontShowButtons", settings.get(PGameSettings.DONT_SHOW_BUTTONS));
+			writer.putElement("switchVideoMode", settings.get(PGameSettings.SET_RESOLUTION));
+			if ((Boolean) settings.get(PGameSettings.SET_RESOLUTION) || !GmkSplitter.omitDisabledFields) {
 				writer.startElement("videoMode");
-				writer.putElement("colorDepth", LgmConst.toString(settings.colorDepth, ColorDepth.class));
-				writer.putElement("resolution", LgmConst.toString(settings.resolution, Resolution.class));
-				writer.putElement("frequency", LgmConst.toString(settings.frequency, Frequency.class));
+				writer.putElement("colorDepth", colorDepthStrings.get(settings.get(PGameSettings.COLOR_DEPTH)));
+				writer.putElement("resolution", resolutionStrings.get(settings.get(PGameSettings.RESOLUTION)));
+				writer.putElement("frequency", frequencyStrings.get(settings.get(PGameSettings.FREQUENCY)));
 				writer.endElement();
 			}
 		}
 		writer.endElement();
 		writer.startElement("splashImage");
 		{
-			writer.putElement("showCustom", settings.showCustomLoadImage);
-			writer.putElement("partiallyTransparent", settings.imagePartiallyTransparent);
-			writer.putElement("alphaTransparency", settings.loadImageAlpha);
+			writer.putElement("showCustom", settings.get(PGameSettings.SHOW_CUSTOM_LOAD_IMAGE));
+			writer.putElement("partiallyTransparent", settings.get(PGameSettings.IMAGE_PARTIALLY_TRANSPARENTY));
+			writer.putElement("alphaTransparency", settings.get(PGameSettings.LOAD_IMAGE_ALPHA));
 		}
 		writer.endElement();
 		writer.startElement("progressBar");
 		{
-			writer.putElement("mode", LgmConst.toString(settings.loadBarMode, Loadbar.class));
-			writer.putElement("scaleImage", settings.scaleProgressBar);
+			writer.putElement("mode", progressBarStrings.get(settings.get(PGameSettings.LOAD_BAR_MODE)));
+			writer.putElement("scaleImage", settings.get(PGameSettings.SCALE_PROGRESS_BAR));
 		}
 		writer.endElement();
 		writer.startElement("keys");
 		{
-			writer.putElement("letF1ShowGameInfo", settings.letF1ShowGameInfo);
-			writer.putElement("letF4SwitchFullscreen", settings.letF4SwitchFullscreen);
-			writer.putElement("letF5SaveF6Load", settings.letF5SaveF6Load);
-			writer.putElement("letF9Screenshot", settings.letF9Screenshot);
-			writer.putElement("letEscEndGame", settings.letEscEndGame);
-			writer.putElement("treatCloseAsEscape", settings.treatCloseAsEscape);
+			writer.putElement("letF1ShowGameInfo", settings.get(PGameSettings.LET_F1_SHOW_GAME_INFO));
+			writer.putElement("letF4SwitchFullscreen", settings.get(PGameSettings.LET_F4_SWITCH_FULLSCREEN));
+			writer.putElement("letF5SaveF6Load", settings.get(PGameSettings.LET_F5_SAVE_F6_LOAD));
+			writer.putElement("letF9Screenshot", settings.get(PGameSettings.LET_F9_SCREENSHOT));
+			writer.putElement("letEscEndGame", settings.get(PGameSettings.LET_ESC_END_GAME));
+			writer.putElement("treatCloseAsEscape", settings.get(PGameSettings.TREAT_CLOSE_AS_ESCAPE));
 		}
 		writer.endElement();
 		writer.startElement("errors");
 		{
-			writer.putElement("displayErrors", settings.displayErrors);
-			writer.putElement("writeToLog", settings.writeToLog);
-			writer.putElement("abortOnError", settings.abortOnError);
-			writer.putElement("treatUninitializedAsZero", settings.treatUninitializedAs0);
+			writer.putElement("displayErrors", settings.get(PGameSettings.DISPLAY_ERRORS));
+			writer.putElement("writeToLog", settings.get(PGameSettings.WRITE_TO_LOG));
+			writer.putElement("abortOnError", settings.get(PGameSettings.ABORT_ON_ERROR));
+			writer.putElement("treatUninitializedAsZero", settings.get(PGameSettings.TREAT_UNINIT_AS_0));
 			if (GmkSplitter.targetVersion >= 810) {
-				writer.putElement("checkScriptArgumentCount", settings.errorOnArgs);
+				writer.putElement("checkScriptArgumentCount", settings.get(PGameSettings.ERROR_ON_ARGS));
 			}
 		}
 		writer.endElement();
 		writer.startElement("gameInfo");
 		{
-			writer.putElement("gameId", settings.gameId);
-			writer.putElement("author", settings.author);
-			writer.putElement("version", settings.version);
-			writer.putElement("information", settings.information);
+			writer.putElement("gameId", settings.get(PGameSettings.GAME_ID));
+			writer.putElement("author", settings.get(PGameSettings.AUTHOR));
+			writer.putElement("version", settings.get(PGameSettings.VERSION));
+			writer.putElement("information", settings.get(PGameSettings.INFORMATION));
 
-			writer.putElement("versionMajor", settings.versionMajor);
-			writer.putElement("versionMinor", settings.versionMinor);
-			writer.putElement("versionRelease", settings.versionRelease);
-			writer.putElement("versionBuild", settings.versionBuild);
+			writer.putElement("versionMajor", settings.get(PGameSettings.VERSION_MAJOR));
+			writer.putElement("versionMinor", settings.get(PGameSettings.VERSION_MINOR));
+			writer.putElement("versionRelease", settings.get(PGameSettings.VERSION_RELEASE));
+			writer.putElement("versionBuild", settings.get(PGameSettings.VERSION_BUILD));
 
-			writer.putElement("company", settings.company);
-			writer.putElement("product", settings.product);
-			writer.putElement("copyright", settings.copyright);
-			writer.putElement("description", settings.description);
+			writer.putElement("company", settings.get(PGameSettings.COMPANY));
+			writer.putElement("product", settings.get(PGameSettings.PRODUCT));
+			writer.putElement("copyright", settings.get(PGameSettings.COPYRIGHT));
+			writer.putElement("description", settings.get(PGameSettings.DESCRIPTION));
 
+			byte[] binDplayGuid = settings.get(PGameSettings.DPLAY_GUID);
 			StringBuilder directPlayGuid = new StringBuilder();
 			for (int i = 0; i < 16; i++) {
-				String hex = Integer.toHexString(settings.dplayGUID[i] & 0xff);
+				String hex = Integer.toHexString(binDplayGuid[i] & 0xff);
 				if (hex.length() == 1) {
 					directPlayGuid.append('0');
 				}
@@ -197,16 +167,17 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		writer.endElement();
 		writer.startElement("system");
 		{
-			writer.putElement("processPriority", LgmConst.toString(settings.gamePriority, Priority.class));
-			writer.putElement("disableScreensavers", settings.disableScreensavers);
-			writer.putElement("freezeOnLoseFocus", settings.freezeOnLoseFocus);
+			writer.putElement("processPriority", priorityStrings.get(settings.get(PGameSettings.GAME_PRIORITY)));
+			writer.putElement("disableScreensavers", settings.get(PGameSettings.DISABLE_SCREENSAVERS));
+			writer.putElement("freezeOnLoseFocus", settings.get(PGameSettings.FREEZE_ON_LOSE_FOCUS));
 		}
 		writer.endElement();
 		writer.startElement("includes");
 		{
-			writer.putElement("overwriteExisting", settings.overwriteExisting);
-			writer.putElement("removeAtGameEnd", settings.removeAtGameEnd);
-			writer.putElement("useTempFolder", settings.includeFolder == GameSettings.INCLUDE_TEMP);
+			writer.putElement("overwriteExisting", settings.get(PGameSettings.OVERWRITE_EXISTING));
+			writer.putElement("removeAtGameEnd", settings.get(PGameSettings.REMOVE_AT_GAME_END));
+			writer.putElement("useTempFolder",
+					settings.get(PGameSettings.INCLUDE_FOLDER) == GameSettings.IncludeFolder.TEMP);
 		}
 		writer.endElement();
 		writer.endElement();
@@ -218,61 +189,66 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 		reader.enterElement("settings");
 		reader.enterElement("graphics");
 		{
-			settings.scaling = reader.getIntElement("scalingPercent");
-			settings.displayCursor = reader.getBoolElement("displayCursor");
-			settings.useSynchronization = reader.getBoolElement("useVsync");
-			settings.interpolate = reader.getBoolElement("interpolateColors");
-			settings.colorOutsideRoom = Tools.stringToColor(reader.getStringElement("colorOutsideRoom"));
+			settings.put(PGameSettings.SCALING, reader.getIntElement("scalingPercent"));
+			settings.put(PGameSettings.DISPLAY_CURSOR, reader.getBoolElement("displayCursor"));
+			settings.put(PGameSettings.USE_SYNCHRONIZATION, reader.getBoolElement("useVsync"));
+			settings.put(PGameSettings.INTERPOLATE, reader.getBoolElement("interpolateColors"));
+			settings.put(PGameSettings.COLOR_OUTSIDE_ROOM,
+					Tools.stringToColor(reader.getStringElement("colorOutsideRoom")));
 		}
 		reader.leaveElement();
 		reader.enterElement("windowing");
 		{
-			settings.startFullscreen = reader.getBoolElement("startFullscreen");
-			settings.dontDrawBorder = reader.getBoolElement("dontDrawBorder");
-			settings.allowWindowResize = reader.getBoolElement("allowWindowResize");
-			settings.alwaysOnTop = reader.getBoolElement("alwaysOnTop");
-			settings.dontShowButtons = reader.getBoolElement("dontShowButtons");
-			settings.setResolution = reader.getBoolElement("switchVideoMode");
-			if (settings.setResolution || !GmkSplitter.omitDisabledFields) {
+			settings.put(PGameSettings.START_FULLSCREEN, reader.getBoolElement("startFullscreen"));
+			settings.put(PGameSettings.DONT_DRAW_BORDER, reader.getBoolElement("dontDrawBorder"));
+			settings.put(PGameSettings.ALLOW_WINDOW_RESIZE, reader.getBoolElement("allowWindowResize"));
+			settings.put(PGameSettings.ALWAYS_ON_TOP, reader.getBoolElement("alwaysOnTop"));
+			settings.put(PGameSettings.DONT_SHOW_BUTTONS, reader.getBoolElement("dontShowButtons"));
+			settings.put(PGameSettings.SET_RESOLUTION, reader.getBoolElement("switchVideoMode"));
+			if ((Boolean) settings.get(PGameSettings.SET_RESOLUTION) || !GmkSplitter.omitDisabledFields) {
 				reader.enterElement("videoMode");
-				settings.colorDepth = LgmConst.fromString(reader.getStringElement("colorDepth"), ColorDepth.class);
-				settings.resolution = LgmConst.fromString(reader.getStringElement("resolution"), Resolution.class);
-				settings.frequency = LgmConst.fromString(reader.getStringElement("frequency"), Frequency.class);
+				settings.put(PGameSettings.COLOR_DEPTH,
+						lookupReverse(colorDepthStrings, reader.getStringElement("colorDepth")));
+				settings.put(PGameSettings.RESOLUTION,
+						lookupReverse(resolutionStrings, reader.getStringElement("resolution")));
+				settings.put(PGameSettings.FREQUENCY,
+						lookupReverse(frequencyStrings, reader.getStringElement("frequency")));
 				reader.leaveElement();
 			}
 		}
 		reader.leaveElement();
 		reader.enterElement("splashImage");
 		{
-			settings.showCustomLoadImage = reader.getBoolElement("showCustom");
-			settings.imagePartiallyTransparent = reader.getBoolElement("partiallyTransparent");
-			settings.loadImageAlpha = reader.getIntElement("alphaTransparency");
+			settings.put(PGameSettings.SHOW_CUSTOM_LOAD_IMAGE, reader.getBoolElement("showCustom"));
+			settings.put(PGameSettings.IMAGE_PARTIALLY_TRANSPARENTY, reader.getBoolElement("partiallyTransparent"));
+			settings.put(PGameSettings.LOAD_IMAGE_ALPHA, reader.getIntElement("alphaTransparency"));
 		}
 		reader.leaveElement();
 		reader.enterElement("progressBar");
 		{
-			settings.loadBarMode = LgmConst.fromString(reader.getStringElement("mode"), Loadbar.class);
-			settings.scaleProgressBar = reader.getBoolElement("scaleImage");
+			settings.put(PGameSettings.LOAD_BAR_MODE,
+					lookupReverse(progressBarStrings, reader.getStringElement("mode")));
+			settings.put(PGameSettings.SCALE_PROGRESS_BAR, reader.getBoolElement("scaleImage"));
 		}
 		reader.leaveElement();
 		reader.enterElement("keys");
 		{
-			settings.letF1ShowGameInfo = reader.getBoolElement("letF1ShowGameInfo");
-			settings.letF4SwitchFullscreen = reader.getBoolElement("letF4SwitchFullscreen");
-			settings.letF5SaveF6Load = reader.getBoolElement("letF5SaveF6Load");
-			settings.letF9Screenshot = reader.getBoolElement("letF9Screenshot");
-			settings.letEscEndGame = reader.getBoolElement("letEscEndGame");
-			settings.treatCloseAsEscape = reader.getBoolElement("treatCloseAsEscape");
+			settings.put(PGameSettings.LET_F1_SHOW_GAME_INFO, reader.getBoolElement("letF1ShowGameInfo"));
+			settings.put(PGameSettings.LET_F4_SWITCH_FULLSCREEN, reader.getBoolElement("letF4SwitchFullscreen"));
+			settings.put(PGameSettings.LET_F5_SAVE_F6_LOAD, reader.getBoolElement("letF5SaveF6Load"));
+			settings.put(PGameSettings.LET_F9_SCREENSHOT, reader.getBoolElement("letF9Screenshot"));
+			settings.put(PGameSettings.LET_ESC_END_GAME, reader.getBoolElement("letEscEndGame"));
+			settings.put(PGameSettings.TREAT_CLOSE_AS_ESCAPE, reader.getBoolElement("treatCloseAsEscape"));
 		}
 		reader.leaveElement();
 		reader.enterElement("errors");
 		{
-			settings.displayErrors = reader.getBoolElement("displayErrors");
-			settings.writeToLog = reader.getBoolElement("writeToLog");
-			settings.abortOnError = reader.getBoolElement("abortOnError");
-			settings.treatUninitializedAs0 = reader.getBoolElement("treatUninitializedAsZero");
+			settings.put(PGameSettings.DISPLAY_ERRORS, reader.getBoolElement("displayErrors"));
+			settings.put(PGameSettings.WRITE_TO_LOG, reader.getBoolElement("writeToLog"));
+			settings.put(PGameSettings.ABORT_ON_ERROR, reader.getBoolElement("abortOnError"));
+			settings.put(PGameSettings.TREAT_UNINIT_AS_0, reader.getBoolElement("treatUninitializedAsZero"));
 			if (reader.hasNextElement()) {
-				settings.errorOnArgs = reader.getBoolElement("checkScriptArgumentCount");
+				settings.put(PGameSettings.ERROR_ON_ARGS, reader.getBoolElement("checkScriptArgumentCount"));
 				if (GmkSplitter.targetVersion < 810) {
 					GmkSplitter.issueVersionWarning("GameSettings/checkScriptArgumentCount");
 				}
@@ -281,53 +257,64 @@ public class GameSettingsXmlFormat extends XmlFormat<GameSettings> {
 				 * The default is true, but GM sets it to false when converting
 				 * from older formats, so we do that too.
 				 */
-				settings.errorOnArgs = false;
+				settings.put(PGameSettings.ERROR_ON_ARGS, false);
 			}
 		}
 		reader.leaveElement();
 		reader.enterElement("gameInfo");
 		{
-			settings.gameId = reader.getIntElement("gameId");
-			settings.author = reader.getStringElement("author");
-			settings.version = reader.getStringElement("version");
-			settings.information = reader.getStringElement("information");
+			settings.put(PGameSettings.GAME_ID, reader.getIntElement("gameId"));
+			settings.put(PGameSettings.AUTHOR, reader.getStringElement("author"));
+			settings.put(PGameSettings.VERSION, reader.getStringElement("version"));
+			settings.put(PGameSettings.INFORMATION, reader.getStringElement("information"));
 
-			settings.versionMajor = reader.getIntElement("versionMajor");
-			settings.versionMinor = reader.getIntElement("versionMinor");
-			settings.versionRelease = reader.getIntElement("versionRelease");
-			settings.versionBuild = reader.getIntElement("versionBuild");
+			settings.put(PGameSettings.VERSION_MAJOR, reader.getIntElement("versionMajor"));
+			settings.put(PGameSettings.VERSION_MINOR, reader.getIntElement("versionMinor"));
+			settings.put(PGameSettings.VERSION_RELEASE, reader.getIntElement("versionRelease"));
+			settings.put(PGameSettings.VERSION_BUILD, reader.getIntElement("versionBuild"));
 
-			settings.company = reader.getStringElement("company");
-			settings.product = reader.getStringElement("product");
-			settings.copyright = reader.getStringElement("copyright");
-			settings.description = reader.getStringElement("description");
+			settings.put(PGameSettings.COMPANY, reader.getStringElement("company"));
+			settings.put(PGameSettings.PRODUCT, reader.getStringElement("product"));
+			settings.put(PGameSettings.COPYRIGHT, reader.getStringElement("copyright"));
+			settings.put(PGameSettings.DESCRIPTION, reader.getStringElement("description"));
 
+			byte[] binDplayGuid = new byte[16];
 			if (reader.hasNextElement()) {
 				String directPlayGuid = reader.getStringElement("directPlayGuid");
 				for (int i = 0; i < 16; i++) {
 					String hexByte = directPlayGuid.substring(i * 2, i * 2 + 2);
-					settings.dplayGUID[i] = (byte) Integer.parseInt(hexByte, 16);
+					binDplayGuid[i] = (byte) Integer.parseInt(hexByte, 16);
 				}
 			}
+			settings.put(PGameSettings.DPLAY_GUID, binDplayGuid);
 		}
 		reader.leaveElement();
 		reader.enterElement("system");
 		{
-			settings.gamePriority = LgmConst.fromString(reader.getStringElement("processPriority"), Priority.class);
-			settings.disableScreensavers = reader.getBoolElement("disableScreensavers");
-			settings.freezeOnLoseFocus = reader.getBoolElement("freezeOnLoseFocus");
+			settings.put(PGameSettings.GAME_PRIORITY, lookupReverse(priorityStrings, reader.getStringElement("processPriority")));
+			settings.put(PGameSettings.DISABLE_SCREENSAVERS, reader.getBoolElement("disableScreensavers"));
+			settings.put(PGameSettings.FREEZE_ON_LOSE_FOCUS, reader.getBoolElement("freezeOnLoseFocus"));
 		}
 		reader.leaveElement();
 		reader.enterElement("includes");
 		{
-			settings.overwriteExisting = reader.getBoolElement("overwriteExisting");
-			settings.removeAtGameEnd = reader.getBoolElement("removeAtGameEnd");
-			settings.includeFolder = reader.getBoolElement("useTempFolder")
-					? GameSettings.INCLUDE_TEMP
-					: GameSettings.INCLUDE_MAIN;
+			settings.put(PGameSettings.OVERWRITE_EXISTING, reader.getBoolElement("overwriteExisting"));
+			settings.put(PGameSettings.REMOVE_AT_GAME_END, reader.getBoolElement("removeAtGameEnd"));
+			settings.put(PGameSettings.INCLUDE_FOLDER, reader.getBoolElement("useTempFolder")
+					? IncludeFolder.TEMP
+					: IncludeFolder.MAIN);
 		}
 		reader.leaveElement();
 		reader.leaveElement();
 		return settings;
+	}
+
+	private <T, U> T lookupReverse(Map<T, U> map, U value) {
+		for (Entry<T, U> entry : map.entrySet()) {
+			if (entry.getValue().equals(value)) {
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
 }

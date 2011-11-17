@@ -12,8 +12,8 @@ import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 
-import org.lateralgm.resources.Resource;
-import org.lateralgm.resources.Resource.Kind;
+import org.lateralgm.resources.GmObject;
+import org.lateralgm.resources.InstantiableResource;
 import org.lateralgm.resources.ResourceReference;
 
 import com.ganggarrison.easyxml.XmlReader;
@@ -87,23 +87,23 @@ public abstract class XmlFormat<T> {
 		return new Dimension(width, height);
 	}
 	
-	protected void writeIdAttribute(Resource<?, ?> resource, XmlWriter writer) {
+	protected void writeIdAttribute(InstantiableResource<?, ?> resource, XmlWriter writer) {
 		if (preserveId(resource)) {
 			writer.putAttribute("id", resource.getId());
 		}
 	}
 	
-	protected void readIdAttribute(Resource<?, ?> resource, XmlReader reader) {
+	protected void readIdAttribute(InstantiableResource<?, ?> resource, XmlReader reader) {
 		if (preserveId(resource) && reader.hasAttribute("id")) {
 			resource.setId(reader.getIntAttribute("id"));
 		}
 	}
 
-	private boolean preserveId(Resource<?, ?> resource) {
+	private boolean preserveId(InstantiableResource<?, ?> resource) {
 		if (GmkSplitter.preserveIds == IdPreservation.ALL) {
 			return true;
 		}
-		if (GmkSplitter.preserveIds == IdPreservation.OBJECTS && resource.getKind() == Kind.OBJECT) {
+		if (GmkSplitter.preserveIds == IdPreservation.OBJECTS && (resource instanceof GmObject)) {
 			return true;
 		}
 		return false;

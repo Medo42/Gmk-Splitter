@@ -8,6 +8,8 @@
 package com.ganggarrison.gmdec;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,6 +17,7 @@ import java.util.List;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
+import org.lateralgm.file.GmFile.FormatFlavor;
 import org.lateralgm.file.GmFileReader;
 import org.lateralgm.file.GmFileWriter;
 import org.lateralgm.file.GmFormatException;
@@ -92,12 +95,21 @@ public class GmkSplitter {
 		LibManager.autoLoad();
 		try {
 			ResNode root = new ResNode("Root", (byte) 0, null, null);
-			GmFile gmf = GmFileReader.readGmFile(sourceGmk.getAbsolutePath(), root);
-			if (gmf.fileVersion != 800 && gmf.fileVersion != 810) {
+			FileInputStream fis = new FileInputStream(sourceGmk);
+			GmFile gmf;
+			try {
+				gmf = GmFileReader.readGmFile(fis, sourceGmk.toURI(), root);
+			} finally {
+				try {
+					fis.close();
+				} catch (IOException e) {
+				}
+			}
+			if (gmf.format != FormatFlavor.GM_800 && gmf.format != FormatFlavor.GM_810) {
 				System.err
 						.println("Warning: The source file is not of GM version 8 or 8.1. GMK Splitter is *not tested* with this format.");
 			}
-			targetVersion = gmf.fileVersion;
+			targetVersion = gmf.format.getVersion();
 			ResourceWriter.writeTree(root, gmf, destinationPath);
 
 			writeConstants(gmf, destinationPath);
@@ -110,16 +122,20 @@ public class GmkSplitter {
 	public static void compose(File sourcePath, File destinationGmk) throws IOException {
 		LibManager.autoLoad();
 		GmFile gmf = new GmFile();
-		gmf.filename = destinationGmk.getAbsolutePath();
-		gmf.fileVersion = destinationGmk.getName().toLowerCase().endsWith(".gmk") ? 800 : 810;
-		targetVersion = gmf.fileVersion;
+		gmf.uri = destinationGmk.toURI();
+		targetVersion = destinationGmk.getName().toLowerCase().endsWith(".gmk") ? 800 : 810;
 		ResNode root = new ResNode("Root", (byte) 0, null, null);
 		new ResourceReader().readTree(root, gmf, sourcePath);
 
 		readConstants(gmf, sourcePath);
 		readIncludedFiles(gmf, sourcePath);
 
-		GmFileWriter.writeGmFile(gmf, root);
+		FileOutputStream fos = new FileOutputStream(destinationGmk);
+		try {
+			GmFileWriter.writeGmFile(fos, gmf, root, targetVersion);
+		} finally {
+			fos.close();
+		}
 	}
 
 	private static void writeConstants(GmFile gmf, File destinationPath) throws IOException {

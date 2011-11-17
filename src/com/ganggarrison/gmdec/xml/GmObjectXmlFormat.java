@@ -10,8 +10,8 @@ package com.ganggarrison.gmdec.xml;
 
 import org.lateralgm.resources.GmObject;
 import org.lateralgm.resources.GmObject.PGmObject;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.ResourceReference;
+import org.lateralgm.resources.Sprite;
 
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
@@ -45,7 +45,7 @@ public class GmObjectXmlFormat extends XmlFormat<GmObject> {
 			readIdAttribute(gmObject, reader);
 			String spriteRef = readResourceRef(reader, "sprite");
 			DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PGmObject>(
-					gmObject.properties, PGmObject.SPRITE, Kind.SPRITE, spriteRef);
+					gmObject.properties, PGmObject.SPRITE, Sprite.class, spriteRef);
 			notifier.addDeferredReferenceCreator(rc);
 			gmObject.put(PGmObject.SOLID, reader.getBoolElement("solid"));
 			gmObject.put(PGmObject.VISIBLE, reader.getBoolElement("visible"));
@@ -53,11 +53,11 @@ public class GmObjectXmlFormat extends XmlFormat<GmObject> {
 			gmObject.put(PGmObject.PERSISTENT, reader.getBoolElement("persistent"));
 			String parentRef = readResourceRef(reader, "parent");
 			rc = new DeferredPropertyReferenceCreator<PGmObject>(
-					gmObject.properties, PGmObject.PARENT, Kind.OBJECT, parentRef);
+					gmObject.properties, PGmObject.PARENT, GmObject.class, parentRef);
 			notifier.addDeferredReferenceCreator(rc);
 			String maskRef = readResourceRef(reader, "mask");
 			rc = new DeferredPropertyReferenceCreator<PGmObject>(
-					gmObject.properties, PGmObject.MASK, Kind.SPRITE, maskRef);
+					gmObject.properties, PGmObject.MASK, Sprite.class, maskRef);
 			notifier.addDeferredReferenceCreator(rc);
 		}
 		reader.leaveElement();

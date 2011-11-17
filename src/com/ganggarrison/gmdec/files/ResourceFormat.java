@@ -7,19 +7,19 @@ import java.util.List;
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.file.ResourceList;
+import org.lateralgm.resources.InstantiableResource;
 import org.lateralgm.resources.Resource;
-import org.lateralgm.resources.Resource.Kind;
 
 import com.ganggarrison.gmdec.ResourceTreeEntry;
 import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
 import com.ganggarrison.gmdec.dupes.OrderPreservingDupeRemoval;
 import com.ganggarrison.gmdec.dupes.ResourceAccessor;
 
-public abstract class ResourceFormat<T extends Resource<T, ?>> extends FileTreeFormat<T> {
+public abstract class ResourceFormat<T extends InstantiableResource<T, ?>> extends FileTreeFormat<T> {
 	@Override
 	public void addResToTree(T resource, ResNode parent) {
 		ResNode child = new ResNode(resource.getName(),
-				ResNode.STATUS_SECONDARY, resource.getKind(), resource.reference);
+				ResNode.STATUS_SECONDARY, resource.getClass(), resource.reference);
 		parent.add(child);
 	}
 
@@ -28,7 +28,8 @@ public abstract class ResourceFormat<T extends Resource<T, ?>> extends FileTreeF
 		if (resources.isEmpty()) {
 			return;
 		}
-		Kind kind = resources.get(0).getKind();
+		@SuppressWarnings("unchecked")
+		Class<T> kind = (Class<T>) resources.get(0).getClass();
 
 		checkDuplicateNames(resources, kind);
 
@@ -36,7 +37,7 @@ public abstract class ResourceFormat<T extends Resource<T, ?>> extends FileTreeF
 		ResourceAccessor<T> accessor = new ResourceAccessor<T>(resources);
 		OrderPreservingDupeRemoval.perform(accessor);
 
-		ResourceList<T> list = (ResourceList<T>) gmf.getList(kind);
+		ResourceList<T> list = (ResourceList<T>) gmf.resMap.getList(kind);
 		for (T resource : resources) {
 			list.add(resource);
 			if (resource.getId() >= list.lastId) {
@@ -50,19 +51,19 @@ public abstract class ResourceFormat<T extends Resource<T, ?>> extends FileTreeF
 		return new ResourceTreeEntry(resource.getName(), baseFilename(resource), Type.RESOURCE);
 	};
 
-	public static void checkDuplicateNames(Collection<? extends Resource<?, ?>> resources, Kind kind) {
+	public static void checkDuplicateNames(Collection<? extends Resource<?, ?>> resources, Class<?> kind) {
 		HashSet<String> names = new HashSet<String>();
 		HashSet<String> lcNames = new HashSet<String>();
 		for (Resource<?, ?> resource : resources) {
 			String name = resource.getName();
 			String lcName = name.toLowerCase();
 			if (names.contains(name)) {
-				throw new IllegalArgumentException(kind + " " + name
+				throw new IllegalArgumentException(kind.getSimpleName() + " " + name
 						+ " has duplicate name!");
 			}
 			if (lcNames.contains(lcName)) {
-				System.err.println("Warning: The name of " + kind + " " + name
-						+ " only differs in case from a different " + kind + ".");
+				System.err.println("Warning: The name of " + kind.getSimpleName() + " " + name
+						+ " only differs in case from a different " + kind.getSimpleName() + ".");
 			}
 			names.add(name);
 			lcNames.add(lcName);

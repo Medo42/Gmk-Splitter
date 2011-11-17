@@ -8,7 +8,6 @@
 package com.ganggarrison.gmdec.xml;
 
 import org.lateralgm.resources.GmObject;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.ResourceReference;
 import org.lateralgm.resources.Room;
 import org.lateralgm.resources.sub.Instance;
@@ -63,7 +62,7 @@ public class InstanceXmlFormat extends XmlFormat<Instance> {
 			}
 			String objRef = readResourceRef(reader, "object");
 			DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PInstance>(
-					properties, PInstance.OBJECT, Kind.OBJECT, objRef);
+					properties, PInstance.OBJECT, GmObject.class, objRef);
 			notifier.addDeferredReferenceCreator(rc);
 			instance.setPosition(readPoint(reader, "position"));
 			String creationCode = reader.getStringElement("creationCode");

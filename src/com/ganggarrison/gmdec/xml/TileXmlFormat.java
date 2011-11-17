@@ -8,7 +8,6 @@
 package com.ganggarrison.gmdec.xml;
 
 import org.lateralgm.resources.Background;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.ResourceReference;
 import org.lateralgm.resources.Room;
 import org.lateralgm.resources.sub.Tile;
@@ -58,7 +57,7 @@ public class TileXmlFormat extends XmlFormat<Tile> {
 			}
 			String objRef = readResourceRef(reader, "background");
 			DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PTile>(
-					tile.properties, PTile.BACKGROUND, Kind.BACKGROUND, objRef);
+					tile.properties, PTile.BACKGROUND, Background.class, objRef);
 			notifier.addDeferredReferenceCreator(rc);
 			tile.setBackgroundPosition(readPoint(reader, "backgroundPosition"));
 			tile.setRoomPosition(readPoint(reader, "roomPosition"));

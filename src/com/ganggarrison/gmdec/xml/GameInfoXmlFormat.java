@@ -7,7 +7,10 @@
  */
 package com.ganggarrison.gmdec.xml;
 
+import java.awt.Color;
+
 import org.lateralgm.resources.GameInformation;
+import org.lateralgm.resources.GameInformation.PGameInformation;
 
 import com.ganggarrison.easyxml.XmlReader;
 import com.ganggarrison.easyxml.XmlWriter;
@@ -22,19 +25,20 @@ public class GameInfoXmlFormat extends XmlFormat<GameInformation> {
 		{
 			writer.startElement("windowPosition");
 			{
-				writer.putElement("left", info.left);
-				writer.putElement("top", info.top);
-				writer.putElement("width", info.width);
-				writer.putElement("height", info.height);
+				writer.putElement("left", info.get(PGameInformation.LEFT));
+				writer.putElement("top", info.get(PGameInformation.TOP));
+				writer.putElement("width", info.get(PGameInformation.WIDTH));
+				writer.putElement("height", info.get(PGameInformation.HEIGHT));
 			}
 			writer.endElement();
-			writer.putElement("allowResize", info.allowResize);
-			writer.putElement("backgroundColor", Tools.colorToString(info.backgroundColor));
-			writer.putElement("formCaption", info.formCaption);
-			writer.putElement("mimicGameWindow", info.mimicGameWindow);
-			writer.putElement("pauseGame", info.pauseGame);
-			writer.putElement("showBorder", info.showBorder);
-			writer.putElement("stayOnTop", info.stayOnTop);
+			writer.putElement("allowResize", info.get(PGameInformation.ALLOW_RESIZE));
+			writer.putElement("backgroundColor",
+					Tools.colorToString((Color) info.get(PGameInformation.BACKGROUND_COLOR)));
+			writer.putElement("formCaption", info.get(PGameInformation.FORM_CAPTION));
+			writer.putElement("mimicGameWindow", info.get(PGameInformation.MIMIC_GAME_WINDOW));
+			writer.putElement("pauseGame", info.get(PGameInformation.PAUSE_GAME));
+			writer.putElement("showBorder", info.get(PGameInformation.SHOW_BORDER));
+			writer.putElement("stayOnTop", info.get(PGameInformation.STAY_ON_TOP));
 		}
 		writer.endElement();
 	}
@@ -46,19 +50,19 @@ public class GameInfoXmlFormat extends XmlFormat<GameInformation> {
 		{
 			reader.enterElement("windowPosition");
 			{
-				info.left = reader.getIntElement("left");
-				info.top = reader.getIntElement("top");
-				info.width = reader.getIntElement("width");
-				info.height = reader.getIntElement("height");
+				info.put(PGameInformation.LEFT, reader.getIntElement("left"));
+				info.put(PGameInformation.TOP, reader.getIntElement("top"));
+				info.put(PGameInformation.WIDTH, reader.getIntElement("width"));
+				info.put(PGameInformation.HEIGHT, reader.getIntElement("height"));
 			}
 			reader.leaveElement();
-			info.allowResize = reader.getBoolElement("allowResize");
-			info.backgroundColor = Tools.stringToColor(reader.getStringElement("backgroundColor"));
-			info.formCaption = reader.getStringElement("formCaption");
-			info.mimicGameWindow = reader.getBoolElement("mimicGameWindow");
-			info.pauseGame = reader.getBoolElement("pauseGame");
-			info.showBorder = reader.getBoolElement("showBorder");
-			info.stayOnTop = reader.getBoolElement("stayOnTop");
+			info.put(PGameInformation.ALLOW_RESIZE, reader.getBoolElement("allowResize"));
+			info.put(PGameInformation.BACKGROUND_COLOR, Tools.stringToColor(reader.getStringElement("backgroundColor")));
+			info.put(PGameInformation.FORM_CAPTION, reader.getStringElement("formCaption"));
+			info.put(PGameInformation.MIMIC_GAME_WINDOW, reader.getBoolElement("mimicGameWindow"));
+			info.put(PGameInformation.PAUSE_GAME, reader.getBoolElement("pauseGame"));
+			info.put(PGameInformation.SHOW_BORDER, reader.getBoolElement("showBorder"));
+			info.put(PGameInformation.STAY_ON_TOP, reader.getBoolElement("stayOnTop"));
 		}
 		reader.leaveElement();
 		return info;

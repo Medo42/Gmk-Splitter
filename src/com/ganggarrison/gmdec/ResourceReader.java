@@ -19,6 +19,7 @@ import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.GameInformation;
 import org.lateralgm.resources.GameSettings;
+import org.lateralgm.resources.InstantiableResource;
 import org.lateralgm.resources.Resource;
 
 import com.ganggarrison.easyxml.XmlReader;
@@ -91,7 +92,8 @@ public class ResourceReader {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends Resource<T, ?>> void addAllResourcesToGmFile(ResourceFormat<T> format, List<?> resources,
+	private <T extends InstantiableResource<T, ?>> void addAllResourcesToGmFile(ResourceFormat<T> format,
+			List<?> resources,
 			GmFile gmf) {
 		format.addAllResourcesToGmFile((List<T>) resources, gmf);
 	}
@@ -129,7 +131,7 @@ public class ResourceReader {
 			resources.get(prt).add(resource);
 		}
 
-		private <T extends Resource<T, ?>> T readResource(File dir, ResourceTreeEntry entry, ResNode node,
+		private <T extends InstantiableResource<T, ?>> T readResource(File dir, ResourceTreeEntry entry, ResNode node,
 				ResourceFormat<T> format)
 				throws IOException {
 			T res = format.read(dir, entry, notifier);

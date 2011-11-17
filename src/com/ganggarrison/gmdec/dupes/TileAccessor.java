@@ -28,7 +28,7 @@ public class TileAccessor implements ItemAccessor<Tile> {
 	@Override
 	public List<Tile> getItems() {
 		ArrayList<Tile> items = new ArrayList<Tile>();
-		for (Room room : gmFile.rooms) {
+		for (Room room : gmFile.resMap.getList(Room.class)) {
 			for (Tile tile : room.tiles) {
 				items.add(tile);
 			}

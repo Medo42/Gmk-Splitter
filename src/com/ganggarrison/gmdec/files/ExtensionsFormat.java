@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
-import org.lateralgm.resources.Resource;
+import org.lateralgm.resources.Extensions;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.ResourceTreeEntry;
@@ -32,7 +32,7 @@ public class ExtensionsFormat extends FileTreeFormat<List<String>> {
 
 	@Override
 	public void addResToTree(List<String> resource, ResNode parent) {
-		parent.addChild("Extension Packages", ResNode.STATUS_SECONDARY, Resource.Kind.EXTENSIONS);
+		parent.addChild("Extension Packages", ResNode.STATUS_SECONDARY, Extensions.class);
 	}
 
 	@Override

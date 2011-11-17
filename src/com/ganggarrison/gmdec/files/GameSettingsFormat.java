@@ -7,6 +7,7 @@
  */
 package com.ganggarrison.gmdec.files;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.file.iconio.ICOFile;
 import org.lateralgm.resources.GameSettings;
-import org.lateralgm.resources.Resource;
+import org.lateralgm.resources.GameSettings.PGameSettings;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
@@ -41,29 +42,29 @@ public class GameSettingsFormat extends FileTreeFormat<GameSettings> {
 
 		File frontLoadBarFile = new File(path, frontLoadBarFilename);
 		if (frontLoadBarFile.isFile()) {
-			settings.frontLoadBar = ImageIO.read(frontLoadBarFile);
+			settings.put(PGameSettings.FRONT_LOAD_BAR, ImageIO.read(frontLoadBarFile));
 		}
 
 		File backLoadBarFile = new File(path, backLoadBarFilename);
 		if (backLoadBarFile.isFile()) {
-			settings.backLoadBar = ImageIO.read(backLoadBarFile);
+			settings.put(PGameSettings.BACK_LOAD_BAR, ImageIO.read(backLoadBarFile));
 		}
 
 		File loadingImageFile = new File(path, loadingImageFilename);
 		if (loadingImageFile.isFile()) {
-			settings.loadingImage = ImageIO.read(loadingImageFile);
+			settings.put(PGameSettings.LOADING_IMAGE, ImageIO.read(loadingImageFile));
 		}
 
 		File iconFile = new File(path, iconFilename);
 		if (iconFile.isFile()) {
-			settings.gameIcon = new ICOFile(FileTools.readWholeFileBytes(iconFile));
+			settings.put(PGameSettings.GAME_ICON, new ICOFile(FileTools.readWholeFileBytes(iconFile)));
 		}
 		return settings;
 	}
 
 	@Override
 	public void addResToTree(GameSettings resource, ResNode parent) {
-		parent.addChild("Global Game Settings", ResNode.STATUS_SECONDARY, Resource.Kind.GAMESETTINGS);
+		parent.addChild("Global Game Settings", ResNode.STATUS_SECONDARY, GameSettings.class);
 	}
 
 	@Override
@@ -83,23 +84,26 @@ public class GameSettingsFormat extends FileTreeFormat<GameSettings> {
 	public void write(File path, GameSettings settings, GmFile gmf) throws IOException {
 		new GameSettingsXmlFormat().write(settings, new File(path, xmlFilename));
 
-		if (settings.frontLoadBar != null) {
-			ImageIO.write(settings.frontLoadBar, "PNG", new File(path, frontLoadBarFilename));
+		if (settings.get(PGameSettings.FRONT_LOAD_BAR) != null) {
+			ImageIO.write((RenderedImage) settings.get(PGameSettings.FRONT_LOAD_BAR), "PNG", new File(path,
+					frontLoadBarFilename));
 		}
 
-		if (settings.backLoadBar != null) {
-			ImageIO.write(settings.backLoadBar, "PNG", new File(path, backLoadBarFilename));
+		if (settings.get(PGameSettings.BACK_LOAD_BAR) != null) {
+			ImageIO.write((RenderedImage) settings.get(PGameSettings.BACK_LOAD_BAR), "PNG", new File(path,
+					backLoadBarFilename));
 		}
 
-		if (settings.loadingImage != null) {
-			ImageIO.write(settings.loadingImage, "PNG", new File(path, loadingImageFilename));
+		if (settings.get(PGameSettings.LOADING_IMAGE) != null) {
+			ImageIO.write((RenderedImage) settings.get(PGameSettings.LOADING_IMAGE), "PNG", new File(path,
+					loadingImageFilename));
 		}
 
-		if (settings.gameIcon != null) {
+		if (settings.get(PGameSettings.GAME_ICON) != null) {
 			FileOutputStream fos = null;
 			try {
 				fos = new FileOutputStream(new File(path, iconFilename));
-				settings.gameIcon.write(fos);
+				((ICOFile) settings.get(PGameSettings.GAME_ICON)).write(fos);
 			} finally {
 				if (fos != null) {
 					fos.close();

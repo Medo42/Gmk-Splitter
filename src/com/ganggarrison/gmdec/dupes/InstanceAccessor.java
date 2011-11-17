@@ -28,7 +28,7 @@ public class InstanceAccessor implements ItemAccessor<Instance> {
 	@Override
 	public List<Instance> getItems() {
 		ArrayList<Instance> items = new ArrayList<Instance>();
-		for (Room room : gmFile.rooms) {
+		for (Room room : gmFile.resMap.getList(Room.class)) {
 			for (Instance instance : room.instances) {
 				items.add(instance);
 			}

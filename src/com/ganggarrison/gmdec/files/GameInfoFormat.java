@@ -14,7 +14,7 @@ import java.util.List;
 import org.lateralgm.components.impl.ResNode;
 import org.lateralgm.file.GmFile;
 import org.lateralgm.resources.GameInformation;
-import org.lateralgm.resources.Resource;
+import org.lateralgm.resources.GameInformation.PGameInformation;
 
 import com.ganggarrison.gmdec.DeferredReferenceCreatorNotifier;
 import com.ganggarrison.gmdec.FileTools;
@@ -31,13 +31,13 @@ public class GameInfoFormat extends FileTreeFormat<GameInformation> {
 		File xmlFile = new File(path, filename + ".xml");
 		File textFile = new File(path, filename + ".txt");
 		GameInformation info = new GameInfoXmlFormat().read(xmlFile, drcn);
-		info.gameInfoStr = FileTools.readFileAsString(textFile);
+		info.put(PGameInformation.TEXT, FileTools.readFileAsString(textFile));
 		return info;
 	}
 
 	@Override
 	public void addResToTree(GameInformation resource, ResNode parent) {
-		parent.addChild("Game Information", ResNode.STATUS_SECONDARY, Resource.Kind.GAMEINFO);
+		parent.addChild("Game Information", ResNode.STATUS_SECONDARY, GameInformation.class);
 	}
 
 	@Override
@@ -57,6 +57,6 @@ public class GameInfoFormat extends FileTreeFormat<GameInformation> {
 	public void write(File path, GameInformation gameInfo, GmFile gmf) throws IOException {
 		File xmlFile = new File(path, filename + ".xml");
 		new GameInfoXmlFormat().write(gameInfo, xmlFile);
-		FileTools.writeFile(new File(path, filename + ".txt"), gameInfo.gameInfoStr);
+		FileTools.writeFile(new File(path, filename + ".txt"), (String) gameInfo.get(PGameInformation.TEXT));
 	}
 }

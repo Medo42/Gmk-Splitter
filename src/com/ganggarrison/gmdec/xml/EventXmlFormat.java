@@ -108,7 +108,7 @@ public class EventXmlFormat extends XmlFormat<Event> {
 
 		@Override
 		public void createReferences(GmFile gmf) {
-			GmObject collisionObject = gmf.gmObjects.get(name);
+			GmObject collisionObject = gmf.resMap.getList(GmObject.class).get(name);
 			if (collisionObject != null) {
 				event.other = collisionObject.reference;
 				event.id = collisionObject.getId();

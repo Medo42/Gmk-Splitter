@@ -7,7 +7,16 @@
  */
 package com.ganggarrison.gmdec;
 
-import org.lateralgm.resources.Resource;
+import org.lateralgm.resources.Background;
+import org.lateralgm.resources.Font;
+import org.lateralgm.resources.GmObject;
+import org.lateralgm.resources.InstantiableResource;
+import org.lateralgm.resources.Path;
+import org.lateralgm.resources.Room;
+import org.lateralgm.resources.Script;
+import org.lateralgm.resources.Sound;
+import org.lateralgm.resources.Sprite;
+import org.lateralgm.resources.Timeline;
 
 import com.ganggarrison.gmdec.files.BackgroundFormat;
 import com.ganggarrison.gmdec.files.FontFormat;
@@ -26,21 +35,22 @@ import com.ganggarrison.gmdec.files.TimelineFormat;
  * order as they appear in normal GMK files.
  */
 public enum PrimaryResourceType {
-	SPRITES("Sprites", new SpriteFormat(), Resource.Kind.SPRITE),
-	SOUNDS("Sounds", new SoundFormat(), Resource.Kind.SOUND),
-	BACKGROUNDS("Backgrounds", new BackgroundFormat(), Resource.Kind.BACKGROUND),
-	PATHS("Paths", new PathFormat(), Resource.Kind.PATH),
-	SCRIPTS("Scripts", new ScriptFormat(), Resource.Kind.SCRIPT),
-	FONTS("Fonts", new FontFormat(), Resource.Kind.FONT),
-	TIMELINES("Time Lines", new TimelineFormat(), Resource.Kind.TIMELINE),
-	OBJECTS("Objects", new ObjectFormat(), Resource.Kind.OBJECT),
-	ROOMS("Rooms", new RoomFormat(), Resource.Kind.ROOM);
+	SPRITES("Sprites", new SpriteFormat(), Sprite.class),
+	SOUNDS("Sounds", new SoundFormat(), Sound.class),
+	BACKGROUNDS("Backgrounds", new BackgroundFormat(), Background.class),
+	PATHS("Paths", new PathFormat(), Path.class),
+	SCRIPTS("Scripts", new ScriptFormat(), Script.class),
+	FONTS("Fonts", new FontFormat(), Font.class),
+	TIMELINES("Time Lines", new TimelineFormat(), Timeline.class),
+	OBJECTS("Objects", new ObjectFormat(), GmObject.class),
+	ROOMS("Rooms", new RoomFormat(), Room.class);
 
 	public ResourceFormat<?> format;
 	public final String pathName;
-	public final Resource.Kind resourceKind;
+	public final Class<? extends InstantiableResource<?, ?>> resourceKind;
 
-	private PrimaryResourceType(String pathName, ResourceFormat<?> format, Resource.Kind resKind) {
+	private <T extends InstantiableResource<T, ?>> PrimaryResourceType(String pathName, ResourceFormat<?> format,
+			Class<T> resKind) {
 		this.format = format;
 		this.pathName = pathName;
 		this.resourceKind = resKind;

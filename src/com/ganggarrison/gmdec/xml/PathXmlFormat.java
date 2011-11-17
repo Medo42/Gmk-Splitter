@@ -11,8 +11,8 @@ import java.awt.Point;
 
 import org.lateralgm.resources.Path;
 import org.lateralgm.resources.Path.PPath;
-import org.lateralgm.resources.Resource.Kind;
 import org.lateralgm.resources.ResourceReference;
+import org.lateralgm.resources.Room;
 import org.lateralgm.resources.sub.PathPoint;
 
 import com.ganggarrison.easyxml.XmlReader;
@@ -68,7 +68,7 @@ public class PathXmlFormat extends XmlFormat<Path> {
 			reader.leaveElement();
 			String backgroundRoomRef = readResourceRef(reader, "backgroundRoom");
 			DeferredReferenceCreator rc = new DeferredPropertyReferenceCreator<PPath>(
-					path.properties, PPath.BACKGROUND_ROOM, Kind.ROOM, backgroundRoomRef);
+					path.properties, PPath.BACKGROUND_ROOM, Room.class, backgroundRoomRef);
 			notifier.addDeferredReferenceCreator(rc);
 			path.put(PPath.CLOSED, reader.getBoolElement("closed"));
 			path.put(PPath.PRECISION, reader.getIntElement("precision"));

@@ -3,13 +3,13 @@ package com.ganggarrison.gmdec.dupes;
 import java.util.Collections;
 import java.util.List;
 
-import org.lateralgm.resources.Resource;
-import org.lateralgm.resources.Resource.Kind;
+import org.lateralgm.resources.GmObject;
+import org.lateralgm.resources.InstantiableResource;
 
 import com.ganggarrison.gmdec.GmkSplitter;
 import com.ganggarrison.gmdec.GmkSplitter.IdPreservation;
 
-public class ResourceAccessor<T extends Resource<T, ?>> implements ItemAccessor<T> {
+public class ResourceAccessor<T extends InstantiableResource<T, ?>> implements ItemAccessor<T> {
 	private List<T> resources;
 
 	public ResourceAccessor(List<T> resources) {
@@ -47,7 +47,7 @@ public class ResourceAccessor<T extends Resource<T, ?>> implements ItemAccessor<
 		if (resources.isEmpty()) {
 			return "Resource";
 		} else {
-			return resources.get(0).getKind().toString();
+			return resources.get(0).getClass().getSimpleName();
 		}
 	}
 
@@ -56,7 +56,7 @@ public class ResourceAccessor<T extends Resource<T, ?>> implements ItemAccessor<
 		if (resources.isEmpty()) {
 			return false;
 		} else {
-			if(resources.get(0).getKind() == Kind.OBJECT) {
+			if (resources.get(0) instanceof GmObject) {
 				return GmkSplitter.preserveIds == IdPreservation.ALL || GmkSplitter.preserveIds == IdPreservation.OBJECTS;
 			} else {
 				return GmkSplitter.preserveIds == IdPreservation.ALL;
