@@ -69,7 +69,7 @@ public class ResourceWriter {
 	// TODO: create a subclass like in the Reader case to reduce parameter count
 	private static void writeChildTree(File startPath, ResNode child, GmFile gmf) throws IOException {
 		for (PrimaryResourceType type : PrimaryResourceType.values()) {
-			if (type.pathName.equals(child.getUserObject())) {
+			if (type.resourceKind.equals(child.kind)) {
 				writeTreeRecursive(child, new File(startPath, type.pathName), type, gmf);
 				return;
 			}
