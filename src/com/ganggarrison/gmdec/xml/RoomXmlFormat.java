@@ -61,6 +61,9 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 			Color backgroundColor = room.get(PRoom.BACKGROUND_COLOR);
 			writer.putElement("backgroundColor", Tools.colorToString(backgroundColor));
 			writer.putElement("drawBackgroundColor", room.get(PRoom.DRAW_BACKGROUND_COLOR));
+			if (GmkSplitter.targetVersion >= 810) {
+				writer.putElement("clearViewBackground", room.get(PRoom.CLEAR_VIEW_BACKGROUND));
+			}
 			writer.startElement("backgrounds");
 			for (BackgroundDef bg : room.backgroundDefs) {
 				writeBackgroundDef(writer, bg);
@@ -196,6 +199,12 @@ public class RoomXmlFormat extends XmlFormat<Room> {
 			String backgroundColor = reader.getStringElement("backgroundColor");
 			room.put(PRoom.BACKGROUND_COLOR, Tools.stringToColor(backgroundColor));
 			room.put(PRoom.DRAW_BACKGROUND_COLOR, reader.getBoolElement("drawBackgroundColor"));
+			if (reader.hasNextElement("clearViewBackground")) {
+				room.put(PRoom.CLEAR_VIEW_BACKGROUND, reader.getBoolElement("clearViewBackground"));
+				if (GmkSplitter.targetVersion < 810) {
+					GmkSplitter.issueVersionWarning("Room/clearViewBackground");
+				}
+			}
 			reader.enterElement("backgrounds");
 			for (int i = 0; i < room.backgroundDefs.size() && reader.hasNextElement(); i++) {
 				readBackgroundDef(reader, room.backgroundDefs.get(i), notifier);

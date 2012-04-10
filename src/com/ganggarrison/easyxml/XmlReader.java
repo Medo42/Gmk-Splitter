@@ -118,6 +118,11 @@ public class XmlReader {
 		return getNextChildElement() != null;
 	}
 
+	public boolean hasNextElement(String name) {
+		Element nextElement = getNextChildElement();
+		return nextElement != null && nextElement.getTagName().toLowerCase().equals(name.toLowerCase());
+	}
+
 	private void nextChild() {
 		currentChild = getNextChildElement();
 	}
