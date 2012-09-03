@@ -1,3 +1,26 @@
+Purpose
+
+The main use of Gmk Splitter is to enable Game Maker projects to use version
+control tools like git and Mercurial.
+
+Game Maker usually stores the code and resources of a game in a single "source"
+file (.gmk / .gm81). This makes it impractical to use version control tools
+with Game Maker projects, because they see the project source as a single binary
+blob.
+
+Gmk Splitter solves the problem by splitting your .gmk file into a directory
+tree filled with .xml (resource description), .gml (script), image and sound
+files, and which resembles the folder structure that you see in Game Maker.
+This directory can be put under version control, and converted back into a
+.gmk file for editing and compiling with Game Maker.
+
+Newer versions of Game Maker (HTML Studio) introduced a new source format called
+GMX which is similar to the file tree produced by this tool (but not compatible
+with it). I don't have any experience with it, but if you have the option, I
+suggest using it over Gmk Splitter since it is an integrated and supported part
+of Game Maker.
+
+
 How to use
 
 Gmk Splitter is distributed as a jar file (gmksplit.jar). To run the tool,
