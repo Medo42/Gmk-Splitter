@@ -75,9 +75,3 @@ function of your game.
 Since keeping IDs intact might be important for other uses of this tool, the code was
 not completely removed. A command line interface to expose this option will be added
 in the future.
-
-GMK Splitter hasn't been extensively tested yet and may very well contain serious bugs.
-Don't rely on its output being equivalent to the input. You should e.g. keep
-backup copies of .gmk files even if you put the file tree under version control.
-(Keeping the .gmk file itself under verison control is problematic since it
-causes merge conflicts).
