@@ -16,11 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.lateralgm.components.impl.ResNode;
-import org.lateralgm.file.GmFile;
+import org.lateralgm.file.*;
 import org.lateralgm.file.GmFile.FormatFlavor;
-import org.lateralgm.file.GmFileReader;
-import org.lateralgm.file.GmFileWriter;
-import org.lateralgm.file.GmFormatException;
 import org.lateralgm.resources.library.LibManager;
 import org.lateralgm.resources.sub.Constant;
 
@@ -99,6 +96,10 @@ public class GmkSplitter {
 			GmFile gmf;
 			try {
 				gmf = GmFileReader.readGmFile(fis, sourceGmk.toURI(), root);
+				// Workaround for bug in LateralGM (fixed there in https://github.com/IsmAvatar/LateralGM/commit/c1826a829f1ebc9751015d05c9c15f87aa1488b9)
+				// where they never filled the resource references that could not be resolved immediately
+				// Can be removed if we ever update the LateralGM dependency
+				PostponeRunner.runPostponedRefUpdates();
 			} finally {
 				try {
 					fis.close();
