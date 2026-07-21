@@ -38,14 +38,46 @@ public class GmkSplitter {
 	public static int targetVersion = 800;
 
 	public static void main(String[] args) throws IOException {
-		if (args.length != 2) {
+		List<String> paths = new ArrayList<String>();
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+			if (arg.equals("--preserve-ids") || arg.startsWith("--preserve-ids=")) {
+				String value;
+				if (arg.startsWith("--preserve-ids=")) {
+					value = arg.substring("--preserve-ids=".length());
+				} else if (i + 1 < args.length) {
+					value = args[++i];
+				} else {
+					System.err.println("Option --preserve-ids requires a value.");
+					printUsage();
+					return;
+				}
+				try {
+					preserveIds = IdPreservation.valueOf(value.toUpperCase());
+				} catch (IllegalArgumentException e) {
+					System.err.println("Invalid value for --preserve-ids: " + value);
+					System.err.println("Valid values are: none, objects, all");
+					return;
+				}
+			} else if (arg.startsWith("-")) {
+				System.err.println("Unknown option: " + arg);
+				printUsage();
+				return;
+			} else {
+				paths.add(arg);
+			}
+		}
+
+		if (paths.size() != 2) {
 			printUsage();
 			return;
 		}
+		String source = paths.get(0);
+		String dest = paths.get(1);
 
-		if (isGmkFile(args[0])) {
-			File gmkFile = new File(args[0]);
-			File dir = new File(args[1]);
+		if (isGmkFile(source)) {
+			File gmkFile = new File(source);
+			File dir = new File(dest);
 			if (!gmkFile.isFile()) {
 				System.err.println("Source file " + gmkFile + " not found.");
 				return;
@@ -57,9 +89,9 @@ public class GmkSplitter {
 			}
 
 			decompose(gmkFile, dir);
-		} else if (isGmkFile(args[1])) {
-			File dir = new File(args[0]);
-			File gmkFile = new File(args[1]);
+		} else if (isGmkFile(dest)) {
+			File dir = new File(source);
+			File gmkFile = new File(dest);
 			if (!dir.isDirectory()) {
 				System.err.println("Source directory " + dir + " not found.");
 				return;
@@ -77,11 +109,19 @@ public class GmkSplitter {
 	}
 
 	private static void printUsage() {
-		System.out.println("Usage: java -jar GmkSplit.jar <source> <dest>");
+		System.out.println("Usage: java -jar GmkSplit.jar [options] <source> <dest>");
 		System.out.println("One of <source> or <dest> must be the name of a .gmk or .gm81 file.");
 		System.out.println("Using a .gmk file as destination will create a GM 8.0 file.");
 		System.out.println("Using a .gm81 file as destination will create a GM 8.1 file.");
 		System.out.println("The destination must not already exist. This tool won't overwrite.");
+		System.out.println();
+		System.out.println("Options:");
+		System.out.println("  --preserve-ids <none|objects|all>");
+		System.out.println("      Which numeric IDs to store in and read back from the directory tree.");
+		System.out.println("      objects: Keep Object IDs only. (default)");
+		System.out.println("      all:     Also keep the IDs of all other resources, instances and tiles.");
+		System.out.println("      none:    Don't keep any IDs. May change instance execution order!");
+		System.out.println("      Use the same setting for splitting and rejoining a project.");
 	}
 
 	private static boolean isGmkFile(String arg) {

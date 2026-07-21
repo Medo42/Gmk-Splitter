@@ -31,7 +31,8 @@ public class ScriptFormat extends ResourceFormat<Script> {
 
 		StringBuilder code = new StringBuilder(FileTools.readFileAsString(scriptFile));
 
-		Pattern pattern = Pattern.compile("/\\* !scriptId=(\\d+) \\*/\r\n");
+		// Accept LF as well as CRLF in case an editor or VCS normalized line endings
+		Pattern pattern = Pattern.compile("/\\* !scriptId=(\\d+) \\*/\r?\n");
 		Matcher matcher = pattern.matcher(code);
 		if (matcher.find()) {
 			if (GmkSplitter.preserveIds == IdPreservation.ALL) {

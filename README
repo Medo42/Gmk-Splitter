@@ -55,7 +55,6 @@ will never be supported because they are not useful for the purpose of this tool
 
 These features are currently not supported but will be in later versions:
 - Triggers
-- Optional retention of all IDs
 
 These features are not supported and might not make it later either:
 - Action Libraries
@@ -63,7 +62,7 @@ These features are not supported and might not make it later either:
 These features won't be supported:
 - Timestamps (last modification of individual resources)
 
-No IDs except those of Objects are stored with the game data. In early
+By default, no IDs except those of Objects are stored with the game data. In early
 versions the tool tried to keep this information intact, but this strategy has led to
 unneccessary problems with otherwise unproblematic merges. Version 0.8 got rid of IDs
 entirely, but this caused suble problems with the execution order of different instances.
@@ -72,6 +71,19 @@ in the tree format. As long as your game doesn't reference resources,
 instances or tiles by their numeric ID, the loss of ID information shouldn't affect the
 function of your game.
 
-Since keeping IDs intact might be important for other uses of this tool, the code was
-not completely removed. A command line interface to expose this option will be added
-in the future.
+Since keeping IDs intact might be important for other uses of this tool, the behaviour
+can be changed with the --preserve-ids command line option:
+
+java -jar gmksplit.jar --preserve-ids all <input> <output>
+
+  objects (default): Only Object IDs are stored in the directory tree.
+  all: The IDs of all resources, room instances and tiles are stored as well.
+       Resource IDs are stored as "id" attributes in the XML files; script IDs
+       are stored in a comment of the form /* !scriptId=123 */ in the first
+       line of the .gml file.
+  none: No IDs are stored at all. Note the caveat about instance execution
+        order above.
+
+Use the same setting when splitting and rejoining a project - IDs that were not
+stored when splitting are assigned anew when the .gmk file is built. Duplicate
+IDs (which can result from merging branches) are resolved automatically.
