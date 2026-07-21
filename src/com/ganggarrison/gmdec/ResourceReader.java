@@ -23,6 +23,7 @@ import org.lateralgm.resources.InstantiableResource;
 import org.lateralgm.resources.Resource;
 
 import com.ganggarrison.easyxml.XmlReader;
+import com.ganggarrison.gmdec.CommandLineOptions.DuplicateIdType;
 import com.ganggarrison.gmdec.ResourceTreeEntry.Type;
 import com.ganggarrison.gmdec.dupes.InstanceAccessor;
 import com.ganggarrison.gmdec.dupes.OrderPreservingDupeRemoval;
@@ -85,10 +86,28 @@ public class ResourceReader {
 			addAllResourcesToGmFile(prt.format, resources.get(prt), gmf);
 		}
 
-		OrderPreservingDupeRemoval.perform(new TileAccessor(gmf));
-		OrderPreservingDupeRemoval.perform(new InstanceAccessor(gmf));
+		processTileIds(gmf);
+		processInstanceIds(gmf);
 
 		notifier.createReferences(gmf);
+	}
+
+	private void processTileIds(GmFile gmf) {
+		TileAccessor accessor = new TileAccessor(gmf);
+		if (GmkSplitter.areDuplicateIdsAllowed(DuplicateIdType.TILES)) {
+			OrderPreservingDupeRemoval.performAllowingDuplicates(accessor);
+		} else {
+			OrderPreservingDupeRemoval.perform(accessor);
+		}
+	}
+
+	private void processInstanceIds(GmFile gmf) {
+		InstanceAccessor accessor = new InstanceAccessor(gmf);
+		if (GmkSplitter.areDuplicateIdsAllowed(DuplicateIdType.INSTANCES)) {
+			OrderPreservingDupeRemoval.performAllowingDuplicates(accessor);
+		} else {
+			OrderPreservingDupeRemoval.perform(accessor);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

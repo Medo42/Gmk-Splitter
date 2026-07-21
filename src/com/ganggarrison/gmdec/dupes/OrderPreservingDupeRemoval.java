@@ -60,4 +60,34 @@ public class OrderPreservingDupeRemoval {
 					+ " IDs have been assigned.");
 		}
 	}
+
+	/**
+	 * Keep every valid ID, including duplicates. Missing or invalid IDs are
+	 * assigned above the highest valid ID, and the owning file's last-ID counter
+	 * is updated in the same way as the normal duplicate-removal strategy.
+	 */
+	public static <Item> void performAllowingDuplicates(ItemAccessor<Item> accessor) {
+		List<Item> invalidIdItems = new ArrayList<Item>();
+		int nextFreeItemId = accessor.getFirstValidId();
+
+		for (Item item : accessor.getItems()) {
+			Integer id = accessor.getId(item);
+			if (id == null) {
+				invalidIdItems.add(item);
+			} else if (id >= nextFreeItemId) {
+				nextFreeItemId = id + 1;
+			}
+		}
+
+		for (Item item : invalidIdItems) {
+			accessor.setId(item, nextFreeItemId++);
+		}
+
+		accessor.setMaxId(nextFreeItemId - 1);
+
+		if (invalidIdItems.size() > 0 && accessor.informAboutNewIds()) {
+			System.err.println("INFO: " + invalidIdItems.size() + " new " + accessor.getItemName()
+					+ " IDs have been assigned.");
+		}
+	}
 }

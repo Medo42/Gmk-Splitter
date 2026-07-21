@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 
@@ -22,6 +23,8 @@ import org.lateralgm.resources.library.LibManager;
 import org.lateralgm.resources.sub.Constant;
 
 import com.ganggarrison.easyxml.XmlReader;
+import com.ganggarrison.gmdec.CommandLineOptions.DuplicateIdType;
+import com.ganggarrison.gmdec.CommandLineOptions.ParseException;
 import com.ganggarrison.gmdec.files.IncludedFileFormat;
 import com.ganggarrison.gmdec.xml.ConstantsXmlFormat;
 
@@ -36,56 +39,41 @@ public class GmkSplitter {
 	public static boolean omitDisabledFields = true;
 	public static IdPreservation preserveIds = IdPreservation.OBJECTS;
 	public static int targetVersion = 800;
+	private static EnumSet<DuplicateIdType> allowedDuplicateIds = EnumSet.noneOf(DuplicateIdType.class);
 
 	public static void main(String[] args) throws IOException {
-		List<String> paths = new ArrayList<String>();
-		for (int i = 0; i < args.length; i++) {
-			String arg = args[i];
-			if (arg.equals("--preserve-ids") || arg.startsWith("--preserve-ids=")) {
-				String value;
-				if (arg.startsWith("--preserve-ids=")) {
-					value = arg.substring("--preserve-ids=".length());
-				} else if (i + 1 < args.length) {
-					value = args[++i];
-				} else {
-					System.err.println("Option --preserve-ids requires a value.");
-					printUsage();
-					return;
-				}
-				try {
-					preserveIds = IdPreservation.valueOf(value.toUpperCase());
-				} catch (IllegalArgumentException e) {
-					System.err.println("Invalid value for --preserve-ids: " + value);
-					System.err.println("Valid values are: none, objects, all");
-					return;
-				}
-			} else if (arg.startsWith("-")) {
-				System.err.println("Unknown option: " + arg);
-				printUsage();
-				return;
-			} else {
-				paths.add(arg);
-			}
+		int exitCode = run(args);
+		if (exitCode != 0) {
+			System.exit(exitCode);
+		}
+	}
+
+	static int run(String[] args) throws IOException {
+		CommandLineOptions options;
+		try {
+			options = CommandLineOptions.parse(args);
+		} catch (ParseException e) {
+			System.err.println(e.getMessage());
+			CommandLineOptions.printUsage(System.err);
+			return 2;
 		}
 
-		if (paths.size() != 2) {
-			printUsage();
-			return;
-		}
-		String source = paths.get(0);
-		String dest = paths.get(1);
+		preserveIds = options.getIdPreservation();
+		allowedDuplicateIds = options.getAllowedDuplicateIds();
+		String source = options.getSource();
+		String dest = options.getDestination();
 
 		if (isGmkFile(source)) {
 			File gmkFile = new File(source);
 			File dir = new File(dest);
 			if (!gmkFile.isFile()) {
 				System.err.println("Source file " + gmkFile + " not found.");
-				return;
+				return 1;
 			}
 
 			if (dir.exists()) {
 				System.err.println("Destination directory " + dir + " already exists.");
-				return;
+				return 1;
 			}
 
 			decompose(gmkFile, dir);
@@ -94,34 +82,25 @@ public class GmkSplitter {
 			File gmkFile = new File(dest);
 			if (!dir.isDirectory()) {
 				System.err.println("Source directory " + dir + " not found.");
-				return;
+				return 1;
 			}
 
 			if (gmkFile.exists()) {
 				System.err.println("Destination file " + gmkFile + " already exists.");
-				return;
+				return 1;
 			}
 
 			compose(dir, gmkFile);
 		} else {
-			printUsage();
+			System.err.println("One of <source> or <dest> must be the name of a .gmk or .gm81 file.");
+			CommandLineOptions.printUsage(System.err);
+			return 2;
 		}
+		return 0;
 	}
 
-	private static void printUsage() {
-		System.out.println("Usage: java -jar GmkSplit.jar [options] <source> <dest>");
-		System.out.println("One of <source> or <dest> must be the name of a .gmk or .gm81 file.");
-		System.out.println("Using a .gmk file as destination will create a GM 8.0 file.");
-		System.out.println("Using a .gm81 file as destination will create a GM 8.1 file.");
-		System.out.println("The destination must not already exist. This tool won't overwrite.");
-		System.out.println();
-		System.out.println("Options:");
-		System.out.println("  --preserve-ids <none|objects|all>");
-		System.out.println("      Which numeric IDs to store in and read back from the directory tree.");
-		System.out.println("      objects: Keep Object IDs only. (default)");
-		System.out.println("      all:     Also keep the IDs of all other resources, instances and tiles.");
-		System.out.println("      none:    Don't keep any IDs. May change instance execution order!");
-		System.out.println("      Use the same setting for splitting and rejoining a project.");
+	public static boolean areDuplicateIdsAllowed(DuplicateIdType type) {
+		return allowedDuplicateIds.contains(type);
 	}
 
 	private static boolean isGmkFile(String arg) {

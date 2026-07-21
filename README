@@ -87,3 +87,13 @@ java -jar gmksplit.jar --preserve-ids all <input> <output>
 Use the same setting when splitting and rejoining a project - IDs that were not
 stored when splitting are assigned anew when the .gmk file is built. Duplicate
 IDs (which can result from merging branches) are resolved automatically.
+
+Some projects intentionally reuse tile or instance IDs in different rooms. To
+keep those duplicate IDs unchanged when using "--preserve-ids all", list the
+types to allow as a comma-separated value:
+
+java -jar gmksplit.jar --preserve-ids all --allow-duplicate-ids tiles,instances <input> <output>
+
+The currently supported values are "tiles" and "instances". Either may be used
+alone. Missing or invalid IDs are still assigned above the existing maximum,
+and duplicate resource IDs are still resolved automatically.
