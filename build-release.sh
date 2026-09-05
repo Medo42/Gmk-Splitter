@@ -216,7 +216,9 @@ log "Assembling combined source tree (repo src + vendored org.lateralgm)..."
 cp -r "$REPO_ROOT/src/." "$BUILD_DIR/src/"
 
 # Vendor org.lateralgm files (java sources + resources) that aren't already
-# provided by this repo (this repo only overrides org/lateralgm/file/PostponeRunner.java).
+# provided by this repo (the repo adds org/lateralgm/file/PostponeRunner.java and
+# overrides GmFileReader.java and GmFileWriter.java in the same package, see the
+# modification notice at the top of those files).
 (cd "$REF_SRC_DIR" && find org -type f ! -name '*.class') | while IFS= read -r f; do
     dest="$BUILD_DIR/src/$f"
     if [ ! -f "$dest" ]; then

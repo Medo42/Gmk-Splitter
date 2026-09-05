@@ -118,6 +118,17 @@ public class XmlReader {
 		return getNextChildElement() != null;
 	}
 
+	/**
+	 * Skip the next child element, whatever its name. Useful for ignoring
+	 * unknown elements.
+	 */
+	public void skipElement() {
+		nextChild();
+		if (currentChild == null) {
+			throw new IllegalArgumentException("No child element found while attempting to skip an element.");
+		}
+	}
+
 	public boolean hasNextElement(String name) {
 		Element nextElement = getNextChildElement();
 		return nextElement != null && nextElement.getTagName().toLowerCase().equals(name.toLowerCase());

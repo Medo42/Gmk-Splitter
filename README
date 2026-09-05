@@ -97,3 +97,35 @@ java -jar gmksplit.jar --preserve-ids all --allow-duplicate-ids tiles,instances 
 The currently supported values are "tiles" and "instances". Either may be used
 alone. Missing or invalid IDs are still assigned above the existing maximum,
 and duplicate resource IDs are still resolved automatically.
+
+
+Character sets (non-ASCII text in .gmk files)
+
+Game Maker 8.0 stores all text in a .gmk file (resource names, scripts, captions
+and so on) in the Windows ANSI code page of the system it runs on, without
+recording which code page that was. A .gmk file created on a Korean Windows
+system contains MS949 (EUC-KR) text, one created on a Western European system
+contains windows-1252 text, and so on. Only plain ASCII text looks the same in
+all of them. GM 8.1 (.gm81) files always use UTF-8 and are not affected by any
+of this.
+
+By default, Gmk Splitter assumes the code page of the system it is running on,
+which is correct if the file was created on a similar system. If the .gmk file
+was created on a system with a different code page, specify it with the
+--charset option:
+
+java -jar gmksplit.jar --charset MS949 game.gmk game_tree
+
+The charset that was used when splitting is stored in the file _metadata.xml in
+the root of the directory tree, and used again when the tree is joined into a
+.gmk file, so --charset is usually only needed for splitting. It may be given
+when joining as well, to override the stored charset or when the tree was created
+by an older version of the tool without _metadata.xml. The tree itself always
+uses UTF-8.
+
+Gmk Splitter prints a warning if the text of a .gmk file cannot be decoded with
+the charset in use (a sign that the charset is wrong), if text cannot be
+represented in the charset used for writing a .gmk file (those characters are
+replaced), and if a .gmk file with non-ASCII text is written as UTF-8 without
+being asked for it, since GM 8.0 will most likely not display such text
+correctly.
