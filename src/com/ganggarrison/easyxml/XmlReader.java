@@ -28,6 +28,16 @@ public class XmlReader {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setIgnoringComments(true);
+			// The tree files are untrusted input (they come from version control).
+			// Disable DOCTYPE and external entity processing to prevent XXE attacks
+			// (reading local files or making network requests while parsing).
+			// The tool never writes a DOCTYPE itself, so nothing legitimate is lost.
+			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			factory.setXIncludeAware(false);
+			factory.setExpandEntityReferences(false);
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			domDocument = builder.parse(xmlFile);
 		} catch (SAXException e) {
